@@ -67,6 +67,8 @@ sendBtn.style.background='#481f1c'; sendBtn.style.color='#fff'; sendBtn.style.bo
 const answers={};
 const destinationSelect=form.querySelector('[name="destination"]');
 const destinationOptions=[...destinationSelect.options].filter(o=>o.value).map(o=>({label:o.text,value:o.value}));
+const fallbackDestinations=['Nairobi','Maasai Mara','Amboseli','Lake Nakuru','Mount Kenya / Nanyuki','Lake Naivasha & Hell\'s Gate','Samburu','Tsavo','Laikipia / Ol Pejeta','Kenyan Coast','Aberdare / Nyeri Highlands','Meru / Bisanadi Cluster','Kakamega Forest','Watamu / Malindi / Arabuko-Sokoke Cluster','Lamu Archipelago'];
+if(!destinationOptions.length){fallbackDestinations.forEach(d=>destinationOptions.push({label:d,value:d}));}
 const interestInputs=[...form.querySelectorAll('[name="interests"]')];
 const interestOptions=interestInputs.map(i=>({label:i.nextSibling.textContent.trim(),value:i.value}));
 

@@ -531,19 +531,12 @@ hr{
 
 .banner img{
     width: 100%;
+    height: 58vh;
+    object-fit: cover;
     filter: brightness(60%);
     padding-top: 7%;
 }
-.banner img {
- /* Set the initial opacity to 0, and then use a CSS transition to fade it in */
-  opacity: 0;
-  transition: opacity 1s ease-in-out;
-}
 
-.banner img.loaded {
-  /* Set the opacity to 1 when the .loaded class is added */
-  opacity: 1;
-} 
 
 .banner-text h1{
     font-size: var(--big-font);
