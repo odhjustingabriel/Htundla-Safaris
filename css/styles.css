@@ -478,7 +478,7 @@ hr{
         color: var(--bg-color);
     }
     .navbar a:hover{
-        color: var(--text-color);
+        color: #fff;
     }
     .open{
          right:  0;

@@ -16,7 +16,7 @@
       .chat-thread{height:380px;overflow-y:auto;border:1px solid #e8e8e8;border-radius:10px;padding:14px;background:#fafafa}
       .msg{margin:10px 0;display:flex}.msg.bot{justify-content:flex-start}.msg.user{justify-content:flex-end}
       .bubble{max-width:75%;padding:10px 14px;border-radius:12px;font-size:14px}.bot .bubble{background:#ececec}.user .bubble{background:#4d7c0f;color:#fff}
-      .chat-actions{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}.chat-actions button{padding:8px 12px;border:0;border-radius:6px;cursor:pointer}
+      .chat-actions{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}.chat-actions button{padding:8px 12px;border:0;border-radius:6px;cursor:pointer;background:#481f1c;color:#fff}.chat-actions button.active{background:#a03f2d;color:#fff;box-shadow:0 0 0 2px #f5d0c5 inset}
       .chat-input{margin-top:12px;display:flex;gap:8px}.chat-input input{flex:1;padding:10px;border:1px solid #ccc;border-radius:6px}
     </style>
 </head>
@@ -63,6 +63,7 @@
 <script>
 const thread=document.getElementById('chat-thread'); const actions=document.getElementById('chat-actions'); const inputWrap=document.getElementById('chat-input');
 const txt=document.getElementById('chat-text'); const sendBtn=document.getElementById('chat-send'); const form=document.getElementById('hidden-form');
+sendBtn.style.background='#481f1c'; sendBtn.style.color='#fff'; sendBtn.style.border='none'; sendBtn.style.borderRadius='6px'; sendBtn.style.padding='10px 14px';
 const answers={};
 const destinationSelect=form.querySelector('[name="destination"]');
 const destinationOptions=[...destinationSelect.options].filter(o=>o.value).map(o=>({label:o.text,value:o.value}));
@@ -99,9 +100,12 @@ function submit(){
  form.querySelector('[name="travel_style"]').value=answers.travel_style||'';
  form.querySelector('[name="group_size"]').value=answers.group_size||'';
  interestInputs.forEach(i=>i.checked=(answers.interests||[]).includes(i.value));
- msg('Thanks! Submitting your inquiry now...','bot');
- form.submit();
+msg('Thanks! Submitting your inquiry now...','bot');
+ thread.innerHTML=''; actions.innerHTML=''; inputWrap.style.display='none';
+ alert('Thank you for reaching out to Htundla Safaris. Your inquiry has been received successfully, and our team is now reviewing your travel preferences and preparing your personalized itinerary. You will receive a follow-up proposal with the itinerary and cost details through your email soon.');
+ setTimeout(()=>form.submit(),200);
 }
+txt.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); if(inputWrap.style.display!=='none'){ sendBtn.click(); } }});
 ask();
 </script>
 </body>
