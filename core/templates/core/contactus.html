@@ -1,0 +1,113 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Madimi+One&family=Paytone+One&family=Poppins&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+    <script type="text/javascript" src="{% static 'script.js' %}" defer></script>
+    <title>Contact Us</title>
+    <style>
+      .chatbot-wrap{max-width:900px;margin:40px auto;background:#fff;border-radius:14px;box-shadow:0 8px 20px rgba(0,0,0,.08);padding:20px}
+      .chat-thread{height:380px;overflow-y:auto;border:1px solid #e8e8e8;border-radius:10px;padding:14px;background:#fafafa}
+      .msg{margin:10px 0;display:flex}.msg.bot{justify-content:flex-start}.msg.user{justify-content:flex-end}
+      .bubble{max-width:75%;padding:10px 14px;border-radius:12px;font-size:14px}.bot .bubble{background:#ececec}.user .bubble{background:#4d7c0f;color:#fff}
+      .chat-actions{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}.chat-actions button{padding:8px 12px;border:0;border-radius:6px;cursor:pointer;background:#481f1c;color:#fff}.chat-actions button.active{background:#a03f2d;color:#fff;box-shadow:0 0 0 2px #f5d0c5 inset}
+      .chat-input{margin-top:12px;display:flex;gap:8px}.chat-input input{flex:1;padding:10px;border:1px solid #ccc;border-radius:6px}
+    </style>
+</head>
+<body>
+<header>
+  <div class="logo"><img src="{% static 'htundla-mainlogo2.png' %}" alt="Company Logo"></div>
+  <div class="bx bx-menu" id="menu-icon"></div>
+  <ul class="navbar">
+    <li><a href="{% url 'index' %}">Home</a></li>
+    <li><a href="{% url 'index' %}#popular">Popular</a></li>
+    <li><a href="{% url 'index' %}#aboutUs">About Us</a></li>
+    <li><a href="{% url 'destinations' %}">Destinations</a></li>
+    <li><a href="#">Contact Us</a></li>
+  </ul>
+</header>
+
+<div class="banner">
+  <img src="{% static 'contactus.jpg' %}" alt="contactusbanner">
+  <div class="banner-text"><h1>Contact Us</h1><p>Create Your Dream Safari</p></div>
+</div>
+
+<section class="chatbot-wrap">
+  <h2>Guided Inquiry Chatbot</h2>
+  {% if messages %}{% for m in messages %}<p>{{ m }}</p>{% endfor %}{% endif %}
+  <div id="chat-thread" class="chat-thread"></div>
+  <div id="chat-actions" class="chat-actions"></div>
+  <div id="chat-input" class="chat-input" style="display:none;">
+    <input type="text" id="chat-text" placeholder="Type your answer here" />
+    <button type="button" id="chat-send">Send</button>
+  </div>
+
+  <form id="hidden-form" method="post" style="display:none;">{% csrf_token %}{{ form.as_p }}</form>
+</section>
+
+<section id="contact">
+  <div class="footer"><div class="main">
+    <div class="list"><h4>Quick Links</h4><ul><li><a href="#aboutUs">About Us</a></li><li><a href="#">Help</a></li><li><a href="#">Tour</a></li></ul></div>
+    <div class="list"><h4>Contact Info</h4><ul><li><a href="#">Nairobi Region</a></li><li><a href="#">+254 722 510 304</a></li><li><a href="#">523 Riara Rd, Nairobi, Kenya</a></li><li><a href="#">P.O Box 7469, Nairobi</a></li><li><a href="#">info@htundla.com</a></li></ul></div>
+    <div class="list"><h4>Connect</h4><div class="social"><a href=""><i class='bx bxl-facebook'></i></a><a href=""><i class='bx bxl-instagram-alt'></i></a><a href=""><i class='bx bxl-twitter'></i></a><a href=""><i class='bx bxl-linkedin'></i></a></div></div>
+  </div></div>
+  <div class="end-text"><p>Copyright © 2026 All Rights Reserved | Htundla Safaris</p></div>
+</section>
+
+<script>
+const thread=document.getElementById('chat-thread'); const actions=document.getElementById('chat-actions'); const inputWrap=document.getElementById('chat-input');
+const txt=document.getElementById('chat-text'); const sendBtn=document.getElementById('chat-send'); const form=document.getElementById('hidden-form');
+sendBtn.style.background='#481f1c'; sendBtn.style.color='#fff'; sendBtn.style.border='none'; sendBtn.style.borderRadius='6px'; sendBtn.style.padding='10px 14px';
+const answers={};
+const destinationSelect=form.querySelector('[name="destination"]');
+const destinationOptions=[...destinationSelect.options].filter(o=>o.value).map(o=>({label:o.text,value:o.value}));
+const interestInputs=[...form.querySelectorAll('[name="interests"]')];
+const interestOptions=interestInputs.map(i=>({label:i.nextSibling.textContent.trim(),value:i.value}));
+
+const steps=[
+ {key:'full_name',q:'Hello! I am your Htundla travel assistant. What is your full name?',type:'text',validate:v=>v.trim().length>2},
+ {key:'email',q:'Great. What is your email address?',type:'text',validate:v=>/.+@.+\..+/.test(v)},
+ {key:'phone_number',q:'Phone number? (optional, press skip)',type:'text',optional:true,validate:v=>!v || /^[0-9+\-\s()]{7,25}$/.test(v)},
+ {key:'travel_type',q:'What travel type do you want?',type:'choice',choices:[{label:'Safari',value:'Safari'},{label:'MICE',value:'MICE'}]},
+ {key:'destination',q:'Choose preferred destination:',type:'choice',choices:destinationOptions},
+ {key:'duration_days',q:'How many days?',type:'text',validate:v=>Number.isInteger(+v)&&+v>0},
+ {key:'travel_style',q:'Choose travel style:',type:'choice',choices:[{label:'Budget-friendly',value:'Budget-friendly'},{label:'Standard',value:'Standard'},{label:'Luxury',value:'Luxury'}]},
+ {key:'group_size',q:'How many travelers in your group?',type:'text',validate:v=>Number.isInteger(+v)&&+v>0},
+ {key:'interests',q:'Select interests (choose one or more, then click Finish):',type:'multi',choices:interestOptions},
+];
+let idx=0;
+function msg(text,who='bot'){const d=document.createElement('div');d.className='msg '+who;d.innerHTML='<div class="bubble">'+text+'</div>';thread.appendChild(d);thread.scrollTop=thread.scrollHeight;}
+function clearUI(){actions.innerHTML=''; inputWrap.style.display='none'; txt.value='';}
+function ask(){clearUI(); const step=steps[idx]; if(!step){submit();return;} msg(step.q,'bot');
+ if(step.type==='choice'){ step.choices.forEach(c=>{const b=document.createElement('button');b.type='button';b.textContent=c.label;b.onclick=()=>record(c.value,c.label);actions.appendChild(b);}); if(step.optional){const s=document.createElement('button');s.type='button';s.textContent='Skip';s.onclick=()=>record('', 'Skip');actions.appendChild(s);} }
+ else if(step.type==='multi'){ step.choices.forEach(c=>{const b=document.createElement('button');b.type='button';b.textContent=c.label;b.dataset.v=c.value;b.onclick=()=>b.classList.toggle('active');actions.appendChild(b);}); const done=document.createElement('button');done.type='button';done.textContent='Finish Selection';done.onclick=()=>{const vals=[...actions.querySelectorAll('.active')].map(b=>b.dataset.v); if(!vals.length){alert('Choose at least one interest');return;} record(vals, vals.join(', '));};actions.appendChild(done);}
+ else { inputWrap.style.display='flex'; sendBtn.onclick=()=>{const v=txt.value.trim(); if(step.optional && !v){record('','Skip');return;} if(step.validate && !step.validate(v)){alert('Please enter a valid answer.'); return;} if(step.key==='duration_days' && answers.travel_type==='Safari' && (+v<3 || +v>5)){alert('Safari core trips must be 3 to 5 days.');return;} record(v,v);}; }
+}
+function record(value,label){const step=steps[idx]; answers[step.key]=value; msg(label,'user'); idx++; ask();}
+function submit(){
+ form.querySelector('[name="full_name"]').value=answers.full_name||'';
+ form.querySelector('[name="email"]').value=answers.email||'';
+ form.querySelector('[name="phone_number"]').value=answers.phone_number||'';
+ form.querySelector('[name="travel_type"]').value=answers.travel_type||'';
+ form.querySelector('[name="destination"]').value=answers.destination||'';
+ form.querySelector('[name="duration_days"]').value=answers.duration_days||'';
+ form.querySelector('[name="travel_style"]').value=answers.travel_style||'';
+ form.querySelector('[name="group_size"]').value=answers.group_size||'';
+ interestInputs.forEach(i=>i.checked=(answers.interests||[]).includes(i.value));
+msg('Thanks! Submitting your inquiry now...','bot');
+ thread.innerHTML=''; actions.innerHTML=''; inputWrap.style.display='none';
+ alert('Thank you for reaching out to Htundla Safaris. Your inquiry has been received successfully, and our team is now reviewing your travel preferences and preparing your personalized itinerary. You will receive a follow-up proposal with the itinerary and cost details through your email soon.');
+ setTimeout(()=>form.submit(),200);
+}
+txt.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); if(inputWrap.style.display!=='none'){ sendBtn.click(); } }});
+
+ask();
+</script>
+</body>
+</html>
