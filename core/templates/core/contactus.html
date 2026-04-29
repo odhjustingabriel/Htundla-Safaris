@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+    <script type="text/javascript" src="{% static 'script.js' %}" defer></script>
+    <title>Contact Us</title>
+</head>
+<body>
+<header>
+    <div class="logo"><img src="{% static 'htundla-mainlogo2.png' %}" alt="Company Logo"></div>
+    <div class="bx bx-menu" id="menu-icon"></div>
+    <ul class="navbar">
+      <li><a href="{% url 'index' %}">Home</a></li>
+      <li><a href="{% url 'index' %}#popular">Popular</a></li>
+      <li><a href="{% url 'index' %}#aboutUs">About Us</a></li>
+      <li><a href="{% url 'destinations' %}">Destinations</a></li>
+      <li><a href="#">Contact Us</a></li>
+    </ul>
+</header>
+
+<section class="destination" style="padding-top:120px;">
+  <div class="title"><h2>Plan with our Guided Chatbot</h2></div>
+  {% if messages %}{% for m in messages %}<p>{{ m }}</p>{% endfor %}{% endif %}
+  <div id="chat-box" style="margin-bottom:20px;"></div>
+  <form id="chat-form" method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">Submit Inquiry</button></form>
+</section>
+
+<script>
+const steps=['full_name','email','phone_number','travel_type','destination','duration_days','travel_style','group_size','interests'];
+const prompts={full_name:'Your full name?',email:'Your email?',phone_number:'Phone number?',travel_type:'Travel type?',destination:'Preferred destination?',duration_days:'Trip duration (days)?',travel_style:'Travel style?',group_size:'Group size?',interests:'Select interests then submit.'};
+const box=document.getElementById('chat-box');
+steps.forEach((s,i)=>{const p=document.createElement('p');p.innerText=(i+1)+'. '+prompts[s];box.appendChild(p);});
+const form=document.getElementById('chat-form');
+form.addEventListener('submit',(e)=>{const email=form.querySelector('[name=email]').value; if(!/.+@.+\..+/.test(email)){alert('Invalid email');e.preventDefault();}
+const d=parseInt(form.querySelector('[name=duration_days]').value||'0',10);const t=form.querySelector('[name=travel_type]').value;if(t==='Safari'&&(d<3||d>5)){alert('Safari duration must be 3-5 days');e.preventDefault();}})
+</script>
+</body>
+</html>
