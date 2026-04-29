@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,15 +10,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Madimi+One&
     family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
-    <link rel="stylesheet" type="text/css" href="/css/styles.css">
-    <script type="text/javascript" src="/js/script.js" defer></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+    <script type="text/javascript" src="{% static 'script.js' %}" defer></script>
     <title>Home Page</title>
 </head>
 <body>
     <!-- header -->
   <header>
     <div class="logo">
-      <img src="/img/htundla-mainlogo2.png" alt="Htundla Safaris logo">
+      <img src="{% static 'htundla-mainlogo2.png' %}" alt="Htundla Safaris logo">
       </div>
         
         <div class="bx bx-menu" id="menu-icon"></div>
@@ -26,8 +27,8 @@
         <li> <a href="#">Home</a> </li>
         <li> <a href="#popular">Popular</a> </li>
         <li> <a href="#aboutUs">About Us</a> </li>
-        <li> <a href="/html/destinations.html">Destinations</a> </li>
-        <li> <a href="/html/contactus.html">Contact Us</a> </li>
+        <li> <a href="{% url 'destinations' %}">Destinations</a> </li>
+        <li> <a href="{% url 'contactus' %}">Contact Us</a> </li>
         <!-- <li> <a href="#">Blog</a> </li> -->
         </ul>
   </header>
@@ -39,7 +40,7 @@
         <p> 
          Your Gateway to Nature & Wildlife Adventures!
         </p>
-        <a href="/html/destinations.html" class="home-btn">Lets Go</a>
+        <a href="{% url 'destinations' %}" class="home-btn">Lets Go</a>
      </div>
     </section>
 
@@ -52,31 +53,31 @@
 
         <ul>
           <li>
-             <img src="/img/pofmind.png" alt="icon1">          
+             <img src="{% static 'pofmind.png' %}" alt="icon1">          
             <br>
             <span>Peace of Mind</span> 
           </li>
 
           <li>
-            <img src="/img/flexiblebooking.png" alt="icon2">
+            <img src="{% static 'flexiblebooking.png' %}" alt="icon2">
             <br>
             <span>Flexible Booking Terms</span>
           </li>
 
           <li>
-            <img src="/img/24-7.png" alt="icon3">
+            <img src="{% static '24-7.png' %}" alt="icon3">
             <br>
             <span>24/7 Support</span>
           </li>
 
           <li>
-            <img src="/img/expert.png" alt="icon4">
+            <img src="{% static 'expert.png' %}" alt="icon4">
             <br>
             <span>Expert Advice on Safaris</span> 
           </li>
 
           <li>
-              <img src="/img/cancel.png" alt="icon5">
+              <img src="{% static 'cancel.png' %}" alt="icon5">
               <br>
               <span>Flexible Cancellation Fees</span>
           </li>
@@ -93,7 +94,7 @@
         <div class="row-items">
          <div class="cont-box">
             <div class="cont-img">
-                <img src="/img/food.png" alt="food">
+                <img src="{% static 'food.png' %}" alt="food">
             </div>
             <h4>Local Cuisines</h4>
             <p>1000+ Dishes</p>
@@ -101,7 +102,7 @@
 
          <div class="cont-box">
             <div class="cont-img">
-                <img src="/img/touring.png" alt="site">
+                <img src="{% static 'touring.png' %}" alt="site">
             </div>
             <h4>Site Seeing</h4>
             <p>100+ Destinations</p>
@@ -109,7 +110,7 @@
 
          <div class="cont-box">
             <div class="cont-img">
-                <img src="/img/animal.png" alt="animal">
+                <img src="{% static 'animal.png' %}" alt="animal">
             </div>
             <h4>Animal Spotting</h4>
             <p>300+ Species</p>
@@ -117,7 +118,7 @@
 
          <div class="cont-box">
             <div class="cont-img">
-                <img src="/img/mountain.png" alt="mountain">
+                <img src="{% static 'mountain.png' %}" alt="mountain">
             </div>
             <h4>Mountain Hiking</h4>
             <p>10+ Mountains</p>
@@ -125,7 +126,7 @@
 
          <div class="cont-box">
             <div class="cont-img">
-                <img src="/img/photographer.png" alt="animal">
+                <img src="{% static 'photographer.png' %}" alt="animal">
             </div>
             <h4>Photo Sites</h4>
             <p>2000+ Stunning Spots</p>
@@ -133,7 +134,7 @@
 
           <div class="cont-box">
             <div class="cont-img">
-                <img src="/img/camp.png" alt="animal">
+                <img src="{% static 'camp.png' %}" alt="animal">
             </div>
             <h4>Camping Sites</h4>
             <p>500+ Sites</p>
@@ -141,7 +142,7 @@
 
             <div class="cont-box">
             <div class="cont-img">
-                <img src="/img/snorkeling.png" alt="animal">
+                <img src="{% static 'snorkeling.png' %}" alt="animal">
             </div>
             <h4>Snorkelling</h4>
             <p>15+ Places</p>
@@ -149,7 +150,7 @@
 
           <div class="cont-box">
             <div class="cont-img">
-                <img src="/img/culture.png" alt="animal">
+                <img src="{% static 'culture.png' %}" alt="animal">
             </div>
             <h4>Culture Imersion</h4>
             <p>40+ Cultures</p>
@@ -157,7 +158,7 @@
 
           <div class="cont-box">
             <div class="cont-img">
-                <img src="/img/hotairballoon.png" alt="animal">
+                <img src="{% static 'hotairballoon.png' %}" alt="animal">
             </div>
             <h4>Hot Air Balloon <br >Safaris</h4>
             <p>20+ Safaris</p>
@@ -165,7 +166,7 @@
 
          <div class="cont-box">
             <div class="cont-img">
-                <img src="/img/parachute.png" alt="parachute">
+                <img src="{% static 'parachute.png' %}" alt="parachute">
             </div>
             <h4>Parachute <br> Gliding</h4>
             <p>100+ Rides</p>
@@ -173,7 +174,7 @@
 
           <div class="cont-box">
             <div class="cont-img">
-                <img src="/img/bird.png" alt="site">
+                <img src="{% static 'bird.png' %}" alt="site">
             </div>
             <h4>Bird <br> Spotting</h4>
             <p>1000+ Species</p>
@@ -181,7 +182,7 @@
 
           <div class="cont-box">
             <div class="cont-img">
-                <img src="/img/walk.png" alt="site">
+                <img src="{% static 'walk.png' %}" alt="site">
             </div>
             <h4>Nature <br> Walks</h4>
             <p>100+ Trails</p>
@@ -199,7 +200,7 @@
          <div class="popular-content">
             <div class="box">
                 <div class="thum">
-                    <img src="/img/mara.jpg" alt="">
+                    <img src="{% static 'mara.jpg' %}" alt="">
                 </div>
                 <div class="dest-content">
                     <div class="location">
@@ -218,7 +219,7 @@
 
                 <div class="box">
                 <div class="thum">
-                    <img src="/img/coast.jpg" alt="">
+                    <img src="{% static 'coast.jpg' %}" alt="">
                 </div>
                 <div class="dest-content">
                     <div class="location">
@@ -237,7 +238,7 @@
 
                 <div class="box">
                 <div class="thum">
-                    <img src="/img/lnakuru.jpg" alt="">
+                    <img src="{% static 'lnakuru.jpg' %}" alt="">
                 </div>
                 <div class="dest-content">
                     <div class="location">
@@ -280,7 +281,7 @@
           and Exclusive and Private safari. Out of the hustles and bustle of the city, this place is a perfect holiday vacation for people who love to 
           explore new adventurous places where you can get in close touch and experience the wildlife and nature.
           </p>
-          <img src="/img/about-us.jpeg" alt="AboutUSimg">
+          <img src="{% static 'about-us.jpeg"} alt="AboutUSimg">
         </div>
       
     </section>
