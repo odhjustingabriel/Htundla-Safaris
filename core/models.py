@@ -29,7 +29,7 @@ class Inquiry(models.Model):
     style_choices=[('Budget-friendly','Budget-friendly'),('Standard','Standard'),('Luxury','Luxury')]
     full_name = models.CharField(max_length=120)
     email = models.EmailField()
-    phone_number = models.CharField(max_length=25, blank=True, validators=[RegexValidator(r'^[0-9+\-\s()]{7,25}$','Invalid phone format')])
+    phone_number = models.CharField(max_length=25, blank=True, validators=[RegexValidator(r'^$|^[0-9+\-\s()]{7,25}$','Invalid phone format')])
     travel_type = models.CharField(max_length=10, choices=travel_type_choices)
     destination = models.ForeignKey(Destination, on_delete=models.PROTECT)
     duration_days = models.PositiveIntegerField(validators=[MinValueValidator(1)])
