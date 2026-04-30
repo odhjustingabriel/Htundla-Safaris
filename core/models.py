@@ -7,7 +7,7 @@ class Destination(models.Model):
     travel_type = models.CharField(max_length=10, choices=[('Safari','Safari'),('MICE','MICE')], default='Safari')
     def __str__(self): return self.name
 
-class Activities(models.Model):
+class Activity(models.Model):
     TIME_SLOTS=[('Morning','Morning'),('Afternoon','Afternoon'),('Evening','Evening'),('Full-day','Full-day'),('Flexible','Flexible')]
     DAY_SUIT=[('Arrival','Arrival'),('Mid-trip','Mid-trip'),('Departure','Departure'),('Any','Any')]
     INTENSITY=[('Light','Light'),('Moderate','Moderate'),('Heavy','Heavy')]
