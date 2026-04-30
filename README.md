@@ -1,270 +1,151 @@
-# Automated Tour Recommendation System for Htundla Safaris
+# Htundla Safaris
 
-A web-based tour recommendation system developed for **Htundla Safaris** as a final year project. The system is designed to help tourists explore safari and MICE travel options in Kenya through a guided chatbot that collects travel preferences and generates a draft itinerary. A human tour operator then reviews the itinerary, prepares the final cost sheet, and sends the final proposal to the customer by email.
+A final-year project website for **Htundla Safaris** (Safari + MICE) implemented with a simple KISS architecture:
+- Frontend: HTML, CSS, JavaScript
+- Backend: Django
+- Recommendation: rule-based itinerary generation (no external AI API dependency)
 
-## Project Purpose
+---
 
-Many tour companies still rely on static websites, WhatsApp messages, phone calls, and email exchanges to collect travel requirements and prepare itineraries manually. This slows down response time, makes personalization difficult, and increases the workload on tour operators.
+## Project Overview
+This project turns the existing static website into a Django-powered workflow where:
+1. A visitor uses a guided chatbot on the Contact Us page.
+2. Preferences are validated on frontend + backend.
+3. Inquiry data is stored in the database.
+4. A draft itinerary is auto-generated.
+5. Operators review/finalize proposals in Django admin.
+6. Proposal communication is sent by email (console backend for development by default).
 
-This project addresses that problem by introducing a simple, workable, and demo-friendly system that:
+---
 
-- collects customer preferences through a guided chatbot
-- validates the submitted information
-- generates a draft itinerary automatically using rule-based recommendation logic
-- allows a human tour operator to review and finalize the proposal
-- supports structured and centralized handling of inquiries
+## Features
+- Existing pages preserved and routed via Django templates:
+  - Homepage
+  - Destinations
+  - Contact Us
+- Guided chatbot conversation for inquiry intake
+- Rule-based itinerary recommendation engine
+- Centralized admin/operator review workflow
+- Finalization and proposal sending flow
+- Seed command for destinations and activities
 
-## Project Scope
+---
 
-This system focuses on:
-
-- **Safari tours**
-- **MICE travel** (Meetings, Incentives, Conferences, and Exhibitions)
-
-The system supports a **minimum of 3 days** and a **maximum of 5 days** for safari itinerary generation, excluding arrival and departure days.
-
-## Design Principle
-
-This project follows the **KISS principle**:
-
-> **Keep It Simple**
-
-The goal is not to build an industry-grade commercial product. The goal is to build a system that is:
-
-- functional
-- clear
-- easy to explain
-- easy to demonstrate
-- realistic for an undergraduate final year project
-
-## Key Features
-
-### Customer Side
-- Homepage with project/company introduction
-- Destinations page showing supported destinations
-- Contact page with guided chatbot
-- Step-by-step collection of travel preferences
-- Frontend validation of chatbot inputs
-- Draft itinerary generation after successful submission
-
-### Backend / System Side
-- Django-powered backend logic
-- Backend validation of all submitted chatbot data
-- Storage of inquiries, destinations, activities, itineraries, and operator responses
-- Rule-based recommendation module for itinerary generation
-- Centralized operator view/admin area for reviewing inquiries
-- Human-in-the-loop proposal finalization
-- Email-based proposal delivery
-
-### Operator Side
-- View inquiries collected from the chatbot
-- View generated draft itineraries
-- Edit/refine itinerary if necessary
-- Add final cost sheet
-- Add proposal notes
-- Mark proposal as finalized/sent
-
-## Recommendation Logic
-
-The system uses a **rule-based automated recommendation approach**, not heavy machine learning.
-
-The recommendation module generates draft itineraries by matching:
-
-- travel type
-- preferred destination
-- travel style
-- group size
-- selected interests
-
-Activities are further filtered and ordered using structured metadata such as:
-
-- **time slot**: Morning, Afternoon, Evening, Full-day, Flexible
-- **day suitability**: Arrival, Mid-trip, Departure, Any
-- **intensity level**: Light, Moderate, Heavy
-- **duration type**: Short, Half-day, Full-day, Multi-day
-
-This allows the system to avoid unrealistic scheduling, such as placing an evening-only activity in the morning.
-
-## Human-in-the-Loop Design
-
-The system intentionally includes a human tour operator in the workflow.
-
-This is important because travel planning in safari and MICE contexts involves real-world operational constraints that cannot always be fully captured in a database, including:
-
-- vehicle availability
-- lodge capacity
-- seasonal access
-- changing prices
-- venue availability
-- operator-specific business decisions
-
-For that reason, the system generates a **draft itinerary**, while the **final cost and final proposal remain the responsibility of the tour operator**.
-
-## Technology Stack
-
-### Frontend
-- HTML
-- CSS
-- JavaScript
-
-### Backend
-- Python
-- Django
-
-### Database
-- SQLite (development)
-- MySQL (optional / production-ready direction)
-
-### Other Tools
-- Django Admin (for centralized operator-side management)
-- Email backend in Django
-- Git / GitHub for version control
-
-## Current Frontend Pages
-
-The current frontend includes:
-
-- `index.html` — Homepage
-- `destinations.html` — Destinations page
-- `contactus.html` — Contact page with chatbot integration point
-
-## Planned / Core Workflow
-
-1. User visits the website
-2. User opens the contact page
-3. User interacts with the chatbot
-4. Chatbot collects:
-   - full name
-   - email address
-   - phone number
-   - travel type
-   - preferred destination
-   - duration
-   - travel style
-   - group size
-   - interests
-5. Frontend validates the input in real time
-6. Data is submitted to Django backend
-7. Django performs backend validation
-8. Valid inquiry is stored in the database
-9. The recommendation module generates a draft itinerary
-10. Operator accesses the inquiry and generated itinerary in a centralized backend/admin view
-11. Operator edits or confirms the itinerary
-12. Operator adds final cost and proposal notes
-13. Final proposal is sent to the customer by email
-
-## Supported Destinations
-
-The project dataset is built around 10 destination groups:
-
-1. Nairobi
-2. Maasai Mara
-3. Amboseli
-4. Lake Nakuru
-5. Mount Kenya / Nanyuki
-6. Lake Naivasha & Hell’s Gate
-7. Samburu
-8. Tsavo
-9. Laikipia / Ol Pejeta
-10. Kenyan Coast
-
-## Supported Experience Categories
-
-The system supports itinerary generation around activities such as:
-
-- Local Cuisines
-- Site Seeing
-- Animal Spotting
-- Mountain Hiking
-- Photo Sites
-- Camping Sites
-- Snorkelling
-- Culture Immersion
-- Hot Air Balloon Safaris
-- Bird Spotting
-- Nature Walks
-
-## Travel Styles
-
-Instead of asking users for direct budget values, the system uses:
-
-- **Budget-friendly**
-- **Standard**
-- **Luxury**
-
-This keeps the interface simple while still helping the system recommend suitable activities. Final pricing is handled manually by the operator.
-
-## System Validation
-
-### Frontend Validation
-The chatbot validates user input in real time to improve usability.
-
-Examples:
-- numeric checks for duration and group size
-- email format check
-- controlled options for travel type and travel style
-
-### Backend Validation
-Django validates all submitted data again before storing it in the database.
-
-This ensures:
-- data integrity
-- protection against malformed submissions
-- protection against bypassing frontend validation
-
-## Database Overview
-
-The core entities in the system are:
-
-- `USER`
-- `INQUIRY`
-- `DESTINATION`
-- `ACTIVITY`
-- `ITINERARY`
-- `ITINERARY_ITEM`
-- `OPERATOR`
-- `OPERATOR_RESPONSE`
-
-These support:
-- user inquiry handling
-- destination and activity management
-- draft itinerary generation
-- operator review and response handling
-
-## Project Structure
-
-A typical structure for this project is expected to look like this:
-
+## Clone the Repository
 ```bash
-project-root/
-│
-├── manage.py
-├── README.md
-├── requirements.txt
-│
-├── project_name/
-│   ├── settings.py
-│   ├── urls.py
-│   ├── asgi.py
-│   └── wsgi.py
-│
-├── app_name/
-│   ├── admin.py
-│   ├── apps.py
-│   ├── forms.py
-│   ├── models.py
-│   ├── tests.py
-│   ├── urls.py
-│   ├── views.py
-│   ├── migrations/
-│   └── templates/
-│       ├── index.html
-│       ├── destinations.html
-│       └── contactus.html
-│
-├── static/
-│   ├── css/
-│   ├── js/
-│   └── images/
-│
-└── media/
+git clone https://github.com/odhjustingabriel/Htundla-Safaris.git
+cd Htundla-Safaris
+```
+
+---
+
+## Django Environment Setup
+
+### 1) Create and activate virtual environment
+**Linux/macOS**
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
+
+**Windows (PowerShell)**
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+```
+
+### 2) Install dependencies
+```bash
+pip install django
+```
+
+### 3) Run migrations
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### 4) Create admin user
+```bash
+python manage.py createsuperuser
+```
+
+### 5) Seed sample data
+```bash
+python manage.py seed_data
+```
+
+### 6) Start development server
+```bash
+python manage.py runserver
+```
+
+Open in browser:
+- `http://127.0.0.1:8000/`
+- `http://127.0.0.1:8000/destinations/`
+- `http://127.0.0.1:8000/contactus/`
+- `http://127.0.0.1:8000/admin/`
+
+---
+
+## Project Structure (Key Files)
+- `htundla_safaris/settings.py` – Django settings
+- `htundla_safaris/urls.py` – route configuration
+- `core/models.py` – data models
+- `core/forms.py` – backend validation
+- `core/recommender.py` – rule-based itinerary logic
+- `core/views.py` – page and workflow views
+- `core/admin.py` – operator/admin workflow
+- `core/management/commands/seed_data.py` – demo dataset seeding
+- `core/templates/core/` – homepage, destinations, contact templates
+- `css/styles.css` – site styling
+
+---
+
+## Email Configuration
+Default development mode uses Django console backend:
+- Email content prints in terminal.
+
+To use SMTP later, set in `settings.py`:
+- `EMAIL_BACKEND`
+- `EMAIL_HOST`
+- `EMAIL_PORT`
+- `EMAIL_HOST_USER`
+- `EMAIL_HOST_PASSWORD`
+- `EMAIL_USE_TLS`
+
+---
+
+## Notes
+- This is an academic demo-focused system (not enterprise-grade).
+- The chatbot is scripted/guided by design.
+- Recommendation logic is deterministic and rule-based for explainability.
+
+---
+
+## License (MIT)
+This project is licensed under the MIT License.
+
+```text
+MIT License
+
+Copyright (c) 2026 Htundla Safaris
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
