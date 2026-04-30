@@ -1,23 +1,8 @@
-import os
 from pathlib import Path
-
-
-def _env_bool(name, default=False):
-    value = os.environ.get(name)
-    if value is None:
-        return default
-    return value.strip().lower() in ('1', 'true', 'yes', 'on')
-
-
-def _env_list(name, default=''):
-    value = os.environ.get(name, default)
-    return [item.strip() for item in value.split(',') if item.strip()]
-
-
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'dev-secret-key')
-DEBUG = _env_bool('DJANGO_DEBUG', True)
-ALLOWED_HOSTS = _env_list('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1')
+SECRET_KEY = 'dev-secret-key'
+DEBUG = True
+ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'django.contrib.admin','django.contrib.auth','django.contrib.contenttypes','django.contrib.sessions','django.contrib.messages','django.contrib.staticfiles',
     'core',

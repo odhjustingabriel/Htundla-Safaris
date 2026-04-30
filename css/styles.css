@@ -80,7 +80,7 @@ section{
     position: relative;
     width: 100%;
     height: 100vh;
-    background: url(/static/bg2.jpg);
+    background: url(/static/home.jpg);
     background-size: cover;
     background-position: center;
     display: grid;
@@ -531,7 +531,7 @@ hr{
 
 .banner img{
     width: 100%;
-    height: 58vh;
+    height: 85vh;
     object-fit: cover;
     filter: brightness(60%);
     padding-top: 7%;

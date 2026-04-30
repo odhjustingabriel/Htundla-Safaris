@@ -21,15 +21,12 @@ class Activity(models.Model):
     intensity = models.CharField(max_length=20, choices=INTENSITY, default='Moderate')
     base_score = models.IntegerField(default=1)
 
-    class Meta:
-        verbose_name_plural = 'Activities'
-
 class Inquiry(models.Model):
     travel_type_choices=[('Safari','Safari'),('MICE','MICE')]
     style_choices=[('Budget-friendly','Budget-friendly'),('Standard','Standard'),('Luxury','Luxury')]
     full_name = models.CharField(max_length=120)
     email = models.EmailField()
-    phone_number = models.CharField(max_length=25, blank=True, validators=[RegexValidator(r'^$|^[0-9+\-\s()]{7,25}$','Invalid phone format')])
+    phone_number = models.CharField(max_length=25, blank=True, validators=[RegexValidator(r'^[0-9+\-\s()]{7,25}$','Invalid phone format')])
     travel_type = models.CharField(max_length=10, choices=travel_type_choices)
     destination = models.ForeignKey(Destination, on_delete=models.PROTECT)
     duration_days = models.PositiveIntegerField(validators=[MinValueValidator(1)])
@@ -39,15 +36,9 @@ class Inquiry(models.Model):
     status = models.CharField(max_length=20, default='Draft Generated')
     created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        verbose_name_plural = 'Inquiries'
-
 class Itinerary(models.Model):
     inquiry = models.OneToOneField(Inquiry, on_delete=models.CASCADE, related_name='itinerary')
     summary = models.TextField(blank=True)
-
-    class Meta:
-        verbose_name_plural = 'Itineraries'
 
 class ItineraryItem(models.Model):
     itinerary = models.ForeignKey(Itinerary, on_delete=models.CASCADE, related_name='items')

@@ -67,7 +67,7 @@ sendBtn.style.background='#481f1c'; sendBtn.style.color='#fff'; sendBtn.style.bo
 const answers={};
 const destinationSelect=form.querySelector('[name="destination"]');
 const destinationOptions=[...destinationSelect.options].filter(o=>o.value).map(o=>({label:o.text,value:o.value}));
-const fallbackDestinations=['Nairobi','Maasai Mara','Amboseli','Lake Nakuru','Mount Kenya / Nanyuki','Lake Naivasha & Hell's Gate','Samburu','Tsavo','Laikipia / Ol Pejeta','Kenyan Coast','Aberdare / Nyeri Highlands','Meru / Bisanadi Cluster','Kakamega Forest','Watamu / Malindi / Arabuko-Sokoke Cluster','Lamu Archipelago'];
+const fallbackDestinations=['Nairobi','Maasai Mara','Amboseli','Lake Nakuru','Mount Kenya / Nanyuki','Lake Naivasha & Hell\'s Gate','Samburu','Tsavo','Laikipia / Ol Pejeta','Kenyan Coast','Aberdare / Nyeri Highlands','Meru / Bisanadi Cluster','Kakamega Forest','Watamu / Malindi / Arabuko-Sokoke Cluster','Lamu Archipelago'];
 if(!destinationOptions.length){fallbackDestinations.forEach(d=>destinationOptions.push({label:d,value:d}));}
 const interestInputs=[...form.querySelectorAll('[name="interests"]')];
 const interestOptions=interestInputs.map(i=>({label:i.nextSibling.textContent.trim(),value:i.value}));
@@ -84,7 +84,7 @@ const steps=[
  {key:'interests',q:'Select interests (choose one or more, then click Finish):',type:'multi',choices:interestOptions},
 ];
 let idx=0;
-function msg(text,who='bot'){const d=document.createElement('div');const bubble=document.createElement('div');d.className='msg '+who;bubble.className='bubble';bubble.textContent=text;d.appendChild(bubble);thread.appendChild(d);thread.scrollTop=thread.scrollHeight;}
+function msg(text,who='bot'){const d=document.createElement('div');d.className='msg '+who;d.innerHTML='<div class="bubble">'+text+'</div>';thread.appendChild(d);thread.scrollTop=thread.scrollHeight;}
 function clearUI(){actions.innerHTML=''; inputWrap.style.display='none'; txt.value='';}
 function ask(){clearUI(); const step=steps[idx]; if(!step){submit();return;} msg(step.q,'bot');
  if(step.type==='choice'){ step.choices.forEach(c=>{const b=document.createElement('button');b.type='button';b.textContent=c.label;b.onclick=()=>record(c.value,c.label);actions.appendChild(b);}); if(step.optional){const s=document.createElement('button');s.type='button';s.textContent='Skip';s.onclick=()=>record('', 'Skip');actions.appendChild(s);} }
@@ -102,9 +102,10 @@ function submit(){
  form.querySelector('[name="travel_style"]').value=answers.travel_style||'';
  form.querySelector('[name="group_size"]').value=answers.group_size||'';
  interestInputs.forEach(i=>i.checked=(answers.interests||[]).includes(i.value));
- msg('Thanks! Submitting your inquiry now...','bot');
- clearUI();
- form.submit();
+msg('Thanks! Submitting your inquiry now...','bot');
+ thread.innerHTML=''; actions.innerHTML=''; inputWrap.style.display='none';
+ alert('Thank you for reaching out to Htundla Safaris. Your inquiry has been received successfully, and our team is now reviewing your travel preferences and preparing your personalized itinerary. You will receive a follow-up proposal with the itinerary and cost details through your email soon.');
+ setTimeout(()=>form.submit(),200);
 }
 txt.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); if(inputWrap.style.display!=='none'){ sendBtn.click(); } }});
 
