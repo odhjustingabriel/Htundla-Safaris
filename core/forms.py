@@ -1,7 +1,7 @@
 from django import forms
 from .models import Inquiry, Destination
 
-ALLOWED_INTERESTS=['Game Drive','Nature Walk','Photography','Culture','MICE','Birding','Cuisine','Camping','Beach','Adventure']
+ALLOWED_INTERESTS=['Game Drive','Nature Walk','Photography','Culture','MICE','Birding','Cuisine','Camping','Beach','Adventure','Team Building','Conference']
 
 class InquiryForm(forms.ModelForm):
     interests = forms.MultipleChoiceField(choices=[(i,i) for i in ALLOWED_INTERESTS], widget=forms.CheckboxSelectMultiple)
