@@ -5,14 +5,14 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from .forms import InquiryForm
-from .models import Destination, Inquiry, OperatorResponse
+from .models import Inquiry, OperatorResponse
 from .recommender import generate_itinerary
 
 def index(request):
     return render(request, 'core/index.html')
 
 def destinations(request):
-    return render(request, 'core/destinations.html', {'destinations': Destination.objects.all()})
+    return render(request, 'core/destinations.html')
 
 def contact_us(request):
     if request.method == 'POST':
