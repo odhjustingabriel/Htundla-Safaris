@@ -102,10 +102,9 @@ function submit(){
  form.querySelector('[name="travel_style"]').value=answers.travel_style||'';
  form.querySelector('[name="group_size"]').value=answers.group_size||'';
  interestInputs.forEach(i=>i.checked=(answers.interests||[]).includes(i.value));
-msg('Thanks! Submitting your inquiry now...','bot');
- thread.innerHTML=''; actions.innerHTML=''; inputWrap.style.display='none';
- alert('Thank you for reaching out to Htundla Safaris. Your inquiry has been received successfully, and our team is now reviewing your travel preferences and preparing your personalized itinerary. You will receive a follow-up proposal with the itinerary and cost details through your email soon.');
- setTimeout(()=>form.submit(),200);
+ msg('Thanks! Submitting your inquiry now...','bot');
+ clearUI();
+ form.submit();
 }
 txt.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); if(inputWrap.style.display!=='none'){ sendBtn.click(); } }});
 
