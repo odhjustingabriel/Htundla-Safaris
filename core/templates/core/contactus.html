@@ -84,7 +84,7 @@ const steps=[
  {key:'interests',q:'Select interests (choose one or more, then click Finish):',type:'multi',choices:interestOptions},
 ];
 let idx=0;
-function msg(text,who='bot'){const d=document.createElement('div');d.className='msg '+who;d.innerHTML='<div class="bubble">'+text+'</div>';thread.appendChild(d);thread.scrollTop=thread.scrollHeight;}
+function msg(text,who='bot'){const d=document.createElement('div');const bubble=document.createElement('div');d.className='msg '+who;bubble.className='bubble';bubble.textContent=text;d.appendChild(bubble);thread.appendChild(d);thread.scrollTop=thread.scrollHeight;}
 function clearUI(){actions.innerHTML=''; inputWrap.style.display='none'; txt.value='';}
 function ask(){clearUI(); const step=steps[idx]; if(!step){submit();return;} msg(step.q,'bot');
  if(step.type==='choice'){ step.choices.forEach(c=>{const b=document.createElement('button');b.type='button';b.textContent=c.label;b.onclick=()=>record(c.value,c.label);actions.appendChild(b);}); if(step.optional){const s=document.createElement('button');s.type='button';s.textContent='Skip';s.onclick=()=>record('', 'Skip');actions.appendChild(s);} }
