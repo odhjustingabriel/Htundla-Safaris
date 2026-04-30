@@ -332,7 +332,9 @@
 <script>
         window.addEventListener("load", function() {
     var homeImage = document.querySelector(".home img");
-    homeImage.classList.add("loaded");
+    if (homeImage) {
+        homeImage.classList.add("loaded");
+    }
     });
 </script>
 </body>
