@@ -125,3 +125,15 @@ To use SMTP later, set in `settings.py`:
 
 ## License (MIT)
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+
+## Security & Environment Variables
+- Copy `.env.example` to your environment and set production-safe values.
+- `DJANGO_SECRET_KEY`, database credentials, and email credentials must be provided via environment variables.
+- Global rate limiting and auth route rate limiting are configurable via env vars.
+- Request body size is enforced using `MAX_REQUEST_BODY_SIZE`.
+- Local Django `runserver` is HTTP-only; use `http://127.0.0.1:8000` in development. If you see HTTPS bad-request noise, keep `SECURE_SSL_REDIRECT=False` locally and only enable it in real HTTPS deployments.
+- If you still see `You're accessing the development server over HTTPS, but it only supports HTTP`:
+  - Make sure the URL is exactly `http://127.0.0.1:8000` (not `https://`).
+  - Clear browser site settings/HSTS for localhost or use a private/incognito window.
+  - Ensure `SECURE_SSL_REDIRECT=False` and `SECURE_HSTS_SECONDS=0` in local env.
