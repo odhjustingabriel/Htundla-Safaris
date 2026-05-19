@@ -132,3 +132,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - `DJANGO_SECRET_KEY`, database credentials, and email credentials must be provided via environment variables.
 - Global rate limiting and auth route rate limiting are configurable via env vars.
 - Request body size is enforced using `MAX_REQUEST_BODY_SIZE`.
+- Local Django `runserver` is HTTP-only; use `http://127.0.0.1:8000` in development. If you see HTTPS bad-request noise, keep `SECURE_SSL_REDIRECT=False` locally and only enable it in real HTTPS deployments.
