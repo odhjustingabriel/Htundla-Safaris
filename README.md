@@ -125,3 +125,10 @@ To use SMTP later, set in `settings.py`:
 
 ## License (MIT)
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+
+## Security & Environment Variables
+- Copy `.env.example` to your environment and set production-safe values.
+- `DJANGO_SECRET_KEY`, database credentials, and email credentials must be provided via environment variables.
+- Global rate limiting and auth route rate limiting are configurable via env vars.
+- Request body size is enforced using `MAX_REQUEST_BODY_SIZE`.
