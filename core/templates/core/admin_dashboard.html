@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Paytone+One&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+  <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+  <title>Operator Dashboard</title>
+  <style>
+    .dashboard-wrap{padding-top:120px}
+    .dashboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-top:1.5rem}
+    .dash-card{background:#fff;border:1px solid #f0eded;border-radius:10px;padding:1.2rem;box-shadow:0 8px 20px rgba(0,0,0,.05)}
+    .dash-card h3{font-size:1rem;color:#666;margin-bottom:.5rem}
+    .dash-card p{font-size:1.8rem;font-weight:700;color:#481f1c}
+    .panel{margin-top:2rem;background:#fff;border-radius:10px;padding:1rem;border:1px solid #f0eded}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:.7rem;border-bottom:1px solid #eee;text-align:left;font-size:.95rem}
+    th{color:#481f1c}
+    .actions a{color:#481f1c;font-weight:600}
+  </style>
+</head>
+<body>
+<header>
+  <div class="logo"><img src="{% static 'htundla-mainlogo2.png' %}" alt="Htundla Safaris logo"></div>
+  <ul class="navbar">
+    <li><a href="{% url 'index' %}">Home</a></li>
+    <li><a href="{% url 'destinations' %}">Destinations</a></li>
+    <li><a href="{% url 'contactus' %}">Contact Us</a></li>
+    <li><a href="/admin/">Django Admin</a></li>
+  </ul>
+</header>
+
+<section class="dashboard-wrap">
+  <div class="title"><h2>Operator Dashboard</h2></div>
+  <div class="dashboard-grid">
+    <div class="dash-card"><h3>Total Inquiries</h3><p>{{ total_inquiries }}</p></div>
+    <div class="dash-card"><h3>Draft Generated</h3><p>{{ draft_count }}</p></div>
+    <div class="dash-card"><h3>Proposal Sent</h3><p>{{ sent_count }}</p></div>
+    <div class="dash-card"><h3>Registered Users</h3><p>{{ total_users }}</p></div>
+  </div>
+
+  <div class="panel">
+    <h3>Recent Users</h3>
+    <table>
+      <thead><tr><th>Username</th><th>Email</th><th>Staff</th><th>Joined</th></tr></thead>
+      <tbody>
+        {% for user in recent_users %}
+          <tr><td>{{ user.username }}</td><td>{{ user.email|default:"-" }}</td><td>{{ user.is_staff }}</td><td>{{ user.date_joined|date:"Y-m-d H:i" }}</td></tr>
+        {% empty %}<tr><td colspan="4">No users found.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h3>Inquiries & Generated Itineraries</h3>
+    <table>
+      <thead><tr><th>Client</th><th>Destination</th><th>Status</th><th>Itinerary Items</th><th>Action</th></tr></thead>
+      <tbody>
+        {% for inquiry in inquiries %}
+          <tr>
+            <td>{{ inquiry.full_name }}<br><small>{{ inquiry.email }}</small></td>
+            <td>{{ inquiry.destination.name }}</td>
+            <td>{{ inquiry.status }}</td>
+            <td>{% if inquiry.itinerary %}{{ inquiry.itinerary.items.count }}{% else %}0{% endif %}</td>
+            <td class="actions"><a href="/admin/core/inquiry/{{ inquiry.id }}/change/">Review</a></td>
+          </tr>
+        {% empty %}<tr><td colspan="5">No inquiries found.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+</body>
+</html>
