@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
-from .forms import InquiryForm
+from .forms import InquiryForm, ProposalForm
 from .models import Destination, Inquiry, OperatorResponse
 from .recommender import generate_itinerary
 
@@ -33,8 +33,12 @@ def send_proposal(request, inquiry_id):
         response.finalized = True
         response.sent_at = timezone.now()
         response.operator = request.user if request.user.is_authenticated else None
-        response.final_cost = request.POST.get('final_cost') or response.final_cost
-        response.proposal_notes = request.POST.get('proposal_notes','')
+        proposal_form = ProposalForm(request.POST)
+        if not proposal_form.is_valid():
+            messages.error(request, 'Invalid proposal payload.')
+            return HttpResponseRedirect(reverse('admin:core_inquiry_change', args=[inquiry.id]))
+        response.final_cost = proposal_form.cleaned_data.get('final_cost') or response.final_cost
+        response.proposal_notes = proposal_form.cleaned_data.get('proposal_notes','')
         response.save()
         itinerary_text = '\n'.join([f"Day {i.day_number} {i.time_slot}: {i.title}" for i in inquiry.itinerary.items.all()]) if hasattr(inquiry,'itinerary') else ''
         send_mail('Your Htundla Proposal', f'Hello {inquiry.full_name},\n\n{response.proposal_notes}\nFinal cost: {response.final_cost}\n\n{itinerary_text}', None, [inquiry.email])
