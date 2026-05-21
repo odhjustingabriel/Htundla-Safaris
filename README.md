@@ -260,3 +260,8 @@ This section maps current controls to OWASP Top 10 categories:
 - Add centralized logging and alerting for suspicious activity (A09).
 - Add dependency management policy (pinning + regular updates) (A06/A08).
 - In production, set strict hostnames and never run with `DJANGO_DEBUG=True`.
+
+
+### Important: `.env.example` is not auto-loaded
+This project does **not** use `python-dotenv` currently, so values in `.env.example` are only a reference.
+Django reads real values from your system environment variables (PowerShell `setx` / `$env:`) or defaults in `settings.py`.
