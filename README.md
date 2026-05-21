@@ -85,6 +85,33 @@ Open in browser:
 - `http://127.0.0.1:8000/destinations/`
 - `http://127.0.0.1:8000/contactus/`
 - `http://127.0.0.1:8000/admin/`
+- `http://127.0.0.1:8000/operator/dashboard/` *(staff users only)*
+
+
+## Accessing the Operator Dashboard
+
+The operator dashboard is available at:
+- `http://127.0.0.1:8000/operator/dashboard/`
+
+### Who can access it
+- Only **staff/admin users** can access this page (`@staff_member_required`).
+
+### Steps to access
+1. Create an admin/staff account (if you do not have one):
+   ```bash
+   python manage.py createsuperuser
+   ```
+2. Start the server:
+   ```bash
+   python manage.py runserver
+   ```
+3. Log in at:
+   - `http://127.0.0.1:8000/admin/`
+4. Open the dashboard:
+   - `http://127.0.0.1:8000/operator/dashboard/`
+
+If you are logged in as a non-staff user, access will be denied.
+
 
 ---
 
