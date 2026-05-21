@@ -1,4 +1,5 @@
 from django import forms
+from django.core.validators import MaxLengthValidator
 from .models import Inquiry, Destination
 
 ALLOWED_INTERESTS=['Game Drive','Nature Walk','Photography','Culture','MICE','Birding','Cuisine','Camping','Beach','Adventure','Team Building','Conference']
@@ -20,3 +21,9 @@ class InquiryForm(forms.ModelForm):
         if data.get('travel_type') == 'Safari' and data.get('duration_days') and not (3 <= data['duration_days'] <= 5):
             self.add_error('duration_days', 'Safari core trips must be between 3 and 5 days.')
         return data
+
+
+class ProposalForm(forms.Form):
+    final_cost = forms.DecimalField(required=False, min_value=0, max_digits=10, decimal_places=2)
+    proposal_notes = forms.CharField(required=False, validators=[MaxLengthValidator(5000)], widget=forms.Textarea)
+
