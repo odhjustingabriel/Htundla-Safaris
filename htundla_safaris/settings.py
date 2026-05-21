@@ -9,11 +9,18 @@ INSTALLED_APPS = [
     'core',
 ]
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware','django.contrib.sessions.middleware.SessionMiddleware','django.middleware.common.CommonMiddleware',
-    'core.middleware.SecurityHardeningMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware','django.contrib.auth.middleware.AuthenticationMiddleware','django.contrib.messages.middleware.MessageMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+if not DEBUG:
+    MIDDLEWARE.insert(0, 'django.middleware.security.SecurityMiddleware')
+    MIDDLEWARE.insert(3, 'core.middleware.SecurityHardeningMiddleware')
+
 ROOT_URLCONF = 'htundla_safaris.urls'
 TEMPLATES = [{
     'BACKEND':'django.template.backends.django.DjangoTemplates','DIRS':[BASE_DIR/'core'/'templates'],'APP_DIRS':True,

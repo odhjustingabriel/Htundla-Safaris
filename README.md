@@ -265,3 +265,17 @@ This section maps current controls to OWASP Top 10 categories:
 ### Important: `.env.example` is not auto-loaded
 This project does **not** use `python-dotenv` currently, so values in `.env.example` are only a reference.
 Django reads real values from your system environment variables (PowerShell `setx` / `$env:`) or defaults in `settings.py`.
+
+
+### Runserver HTTPS noise troubleshooting (development)
+If you still see logs like **"You're accessing the development server over HTTPS, but it only supports HTTP"**, this is usually client-side (browser/proxy/extension) forcing HTTPS before Django handles the request.
+
+What we changed in code:
+- Disabled HTTPS redirect/HSTS defaults in development settings.
+- In `DEBUG=True`, removed `SecurityMiddleware` and custom hardening middleware from active middleware chain to avoid any app-level redirect influence.
+
+What to do locally:
+- Open exactly `http://127.0.0.1:8000/` (not `https://`).
+- Try Incognito/Private window.
+- Clear HSTS/HTTPS-only settings for `127.0.0.1` and `localhost` in your browser.
+- Disable HTTPS-enforcing extensions/proxy/VPN/antivirus web shield temporarily for localhost testing.
