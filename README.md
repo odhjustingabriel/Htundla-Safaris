@@ -92,6 +92,9 @@ Open in browser:
 
 The operator dashboard is available at:
 - `http://127.0.0.1:8000/operator/dashboard/`
+- `http://127.0.0.1:8000/operator/dashboard`
+
+> If you still get a 404, ensure your local branch includes the latest URL config and restart the dev server.
 
 ### Who can access it
 - Only **staff/admin users** can access this page (`@staff_member_required`).
