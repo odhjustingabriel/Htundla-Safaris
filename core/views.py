@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
 from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
@@ -26,6 +27,7 @@ def contact_us(request):
         form = InquiryForm()
     return render(request, 'core/contactus.html', {'form': form})
 
+@staff_member_required
 def send_proposal(request, inquiry_id):
     inquiry = get_object_or_404(Inquiry, id=inquiry_id)
     response, _ = OperatorResponse.objects.get_or_create(inquiry=inquiry)

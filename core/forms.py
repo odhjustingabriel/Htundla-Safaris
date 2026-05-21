@@ -1,5 +1,5 @@
 from django import forms
-from django.core.validators import MaxLengthValidator, MinValueValidator
+from django.core.validators import MaxLengthValidator
 from .models import Inquiry, Destination
 
 ALLOWED_INTERESTS=['Game Drive','Nature Walk','Photography','Culture','MICE','Birding','Cuisine','Camping','Beach','Adventure','Team Building','Conference']
