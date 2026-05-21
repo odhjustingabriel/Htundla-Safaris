@@ -185,6 +185,7 @@ The application includes the following security controls:
   - No hardcoded API keys/tokens/passwords in source; secret scanning performed.
 - **Authentication strength**:
   - Django password validators enabled with minimum length and common-password checks.
+- Development defaults disable HTTPS redirect, HSTS, secure cookies, and use Django DummyCache to avoid HTTPS/cache side effects while running `runserver`.
 
 ### Required Environment Variables
 
