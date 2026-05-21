@@ -1,7 +1,7 @@
 import hashlib
 from django.conf import settings
 from django.core.cache import cache
-from django.http import HttpResponseBadRequest, HttpResponseTooManyRequests
+from django.http import HttpResponse, HttpResponseBadRequest
 
 
 class SecurityHardeningMiddleware:
@@ -21,7 +21,7 @@ class SecurityHardeningMiddleware:
 
         limit = self.auth_limit if self._is_auth_route(request.path) else self.default_limit
         if self._is_rate_limited(request, limit):
-            return HttpResponseTooManyRequests('Rate limit exceeded. Try again later.')
+            return HttpResponse('Rate limit exceeded. Try again later.', status=429)
 
         return self.get_response(request)
 
