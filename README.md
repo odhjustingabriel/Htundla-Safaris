@@ -41,22 +41,40 @@ cd Htundla-Safaris
 
 ## Django Environment Setup
 
+### Runtime versions
+
+This project is pinned to a Django 5.1-compatible runtime:
+
+- Python: `3.12.13` (see `.python-version`)
+- Django: `5.1.15` (see `requirements.txt`)
+
+Use Python 3.12 for the local virtual environment. Do not run this project on Python 3.14 unless Django is upgraded to a version that explicitly supports Python 3.14.
+
 ### 1) Create and activate virtual environment
 **Linux/macOS**
 ```bash
+python3.12 -m venv .venv
+source .venv/bin/activate
+```
+
+**With pyenv**
+```bash
+pyenv install 3.12.13  # if not already installed
+pyenv local 3.12.13
 python -m venv .venv
 source .venv/bin/activate
 ```
 
 **Windows (PowerShell)**
 ```powershell
-python -m venv .venv
+py -3.12 -m venv .venv
 .venv\Scripts\Activate.ps1
 ```
 
 ### 2) Install dependencies
 ```bash
-pip install django
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
 
 ### 3) Run migrations
