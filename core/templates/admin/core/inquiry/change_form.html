@@ -1,0 +1,18 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_urls %}
+
+{#
+Django's built-in change_form_object_tools inclusion tag copies the template
+context while rendering the admin change form. Older Django releases can fail
+there under newer Python runtimes, so render the small object-tools list inline
+for Inquiry change pages instead of invoking that inclusion tag.
+#}
+{% block object-tools-items %}
+<li>
+    {% url opts|admin_urlname:'history' original.pk|admin_urlquote as history_url %}
+    <a href="{% add_preserved_filters history_url %}" class="historylink">{% translate "History" %}</a>
+</li>
+{% if has_absolute_url %}
+<li><a href="{{ absolute_url }}" class="viewsitelink">{% translate "View on site" %}</a></li>
+{% endif %}
+{% endblock %}
