@@ -7,7 +7,7 @@ def _phase(day, total):
     return 'Arrival' if day == 1 else ('Departure' if day == total else 'Mid-trip')
 
 
-def _score(activity, inquiry, phase, slot):
+def _score(activity, inquiry, phase, slot, used_titles):
     score = activity.base_score
     if activity.style == inquiry.travel_style:
         score += 4
@@ -17,6 +17,8 @@ def _score(activity, inquiry, phase, slot):
         score += 3
     if activity.time_slot in (slot, 'Flexible', 'Full-day'):
         score += 3
+    if activity.name in used_titles:
+        score -= 3
     return score
 
 
@@ -32,15 +34,17 @@ def generate_itinerary(inquiry):
         itinerary.save()
         return itinerary
 
+    used = set()
     remaining = activities[:]
     for day in range(1, inquiry.duration_days + 1):
         phase = _phase(day, inquiry.duration_days)
         for slot in SLOTS:
             if not remaining:
                 remaining = activities[:]
-            ranked = sorted(remaining, key=lambda a: (-_score(a, inquiry, phase, slot), a.name))
+            ranked = sorted(remaining, key=lambda a: (-_score(a, inquiry, phase, slot, used), a.name))
             pick = ranked[0]
             remaining.remove(pick)
+            used.add(pick.name)
             ItineraryItem.objects.create(
                 itinerary=itinerary,
                 day_number=day,
