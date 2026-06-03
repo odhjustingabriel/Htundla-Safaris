@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }}</title>
+    <style>
+        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 0; background: #f5f5f5; color: #222; }
+        header { background: #264b5d; color: #fff; padding: 1rem 2rem; }
+        header a { color: #fff; margin-right: 1rem; }
+        main { max-width: 980px; margin: 2rem auto; padding: 0 1rem; }
+        section { background: #fff; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 1rem; padding: 1rem 1.25rem; }
+        h1, h2 { margin-top: 0; }
+        dl { display: grid; grid-template-columns: 180px 1fr; gap: .5rem 1rem; }
+        dt { font-weight: 700; }
+        dd { margin: 0; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border-bottom: 1px solid #e5e5e5; padding: .6rem; text-align: left; vertical-align: top; }
+        label { display: block; font-weight: 700; margin-top: 1rem; }
+        input, textarea { box-sizing: border-box; max-width: 100%; width: 100%; padding: .6rem; }
+        textarea { min-height: 9rem; }
+        .actions { display: flex; gap: .75rem; margin-top: 1rem; flex-wrap: wrap; }
+        button, .button { background: #417690; border: 0; border-radius: 4px; color: #fff; cursor: pointer; display: inline-block; padding: .7rem 1rem; text-decoration: none; }
+        button[name="send_proposal"] { background: #2f7d32; }
+        .messages { list-style: none; padding: 0; }
+        .messages li { background: #e7f4e4; border: 1px solid #b7dfb0; margin-bottom: .5rem; padding: .75rem; }
+        .errors, .errorlist { color: #ba2121; }
+    </style>
+</head>
+<body>
+<header>
+    <a href="{{ changelist_url }}">← Back to inquiries</a>
+    <a href="{{ history_url }}">History</a>
+    <a href="/operator/dashboard/">Operator dashboard</a>
+</header>
+<main>
+    <h1>{{ title }}</h1>
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+    </ul>
+    {% endif %}
+
+    <section>
+        <h2>Inquiry details</h2>
+        <dl>
+            <dt>Guest</dt><dd>{{ inquiry.full_name }}</dd>
+            <dt>Email</dt><dd>{{ inquiry.email }}</dd>
+            <dt>Phone</dt><dd>{{ inquiry.phone_number|default:"—" }}</dd>
+            <dt>Travel type</dt><dd>{{ inquiry.travel_type }}</dd>
+            <dt>Destination</dt><dd>{{ inquiry.destination }}</dd>
+            <dt>Duration</dt><dd>{{ inquiry.duration_days }} day{{ inquiry.duration_days|pluralize }}</dd>
+            <dt>Travel style</dt><dd>{{ inquiry.travel_style }}</dd>
+            <dt>Group size</dt><dd>{{ inquiry.group_size }}</dd>
+            <dt>Interests</dt><dd>{{ inquiry.interests|join:", " }}</dd>
+            <dt>Status</dt><dd>{{ inquiry.status }}</dd>
+            <dt>Created</dt><dd>{{ inquiry.created_at }}</dd>
+        </dl>
+    </section>
+
+    <section>
+        <h2>Generated itinerary</h2>
+        {% if itinerary %}
+            {% if itinerary.summary %}<p>{{ itinerary.summary }}</p>{% endif %}
+            <table>
+                <thead><tr><th>Day</th><th>Time</th><th>Activity</th><th>Notes</th></tr></thead>
+                <tbody>
+                    {% for item in itinerary.items.all %}
+                    <tr>
+                        <td>{{ item.day_number }}</td>
+                        <td>{{ item.time_slot }}</td>
+                        <td>{{ item.title }}</td>
+                        <td>{{ item.notes|default:"—" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4">No itinerary items were generated.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No itinerary has been generated for this inquiry yet.</p>
+        {% endif %}
+    </section>
+
+    <section>
+        <h2>Proposal</h2>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {% if proposal_form.non_field_errors %}<div class="errors">{{ proposal_form.non_field_errors }}</div>{% endif %}
+
+            <label for="{{ proposal_form.final_cost.id_for_label }}">Final cost</label>
+            {{ proposal_form.final_cost.errors }}
+            {{ proposal_form.final_cost }}
+
+            <label for="{{ proposal_form.proposal_notes.id_for_label }}">Proposal notes</label>
+            {{ proposal_form.proposal_notes.errors }}
+            {{ proposal_form.proposal_notes }}
+
+            <div class="actions">
+                <button type="submit" name="save_proposal" value="1">Save proposal details</button>
+                <button type="submit" name="send_proposal" value="1">Finalize and send proposal</button>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>
