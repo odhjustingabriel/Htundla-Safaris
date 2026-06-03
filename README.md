@@ -43,12 +43,12 @@ cd Htundla-Safaris
 
 ### Runtime versions
 
-This project is pinned to a Django 5.1-compatible runtime:
+This project is pinned to a Django 5.2 LTS-compatible runtime:
 
 - Python: `3.12.13` (see `.python-version`)
-- Django: `5.1.15` (see `requirements.txt`)
+- Django: `5.2.15` (see `requirements.txt`)
 
-Use Python 3.12 for the local virtual environment. Do not run this project on Python 3.14 unless Django is upgraded to a version that explicitly supports Python 3.14.
+Use Python 3.12 for the local virtual environment. Django 5.2 LTS also supports newer Python releases, but this repository pins Python 3.12.13 for predictable local setup.
 
 ### 1) Create and activate virtual environment
 **Linux/macOS**
@@ -79,7 +79,6 @@ python -m pip install -r requirements.txt
 
 ### 3) Run migrations
 ```bash
-python manage.py makemigrations
 python manage.py migrate
 ```
 
