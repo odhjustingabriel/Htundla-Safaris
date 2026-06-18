@@ -9,4 +9,6 @@ urlpatterns = [
     path('proposal/send/<int:inquiry_id>/', views.send_proposal, name='send_proposal'),
     path('operator/dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('operator/dashboard', views.admin_dashboard),
+    path('operator/inquiries/<int:inquiry_id>/review/', views.operator_inquiry_review, name='operator_inquiry_review'),
+    path('superuser/dashboard/', views.superuser_dashboard, name='superuser_dashboard'),
 ]
