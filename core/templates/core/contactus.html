@@ -82,6 +82,7 @@ const steps=[
  {key:'travel_style',q:'Choose travel style:',type:'choice',choices:[{label:'Budget-friendly',value:'Budget-friendly'},{label:'Standard',value:'Standard'},{label:'Luxury',value:'Luxury'}]},
  {key:'group_size',q:'How many travelers in your group?',type:'text',validate:v=>Number.isInteger(+v)&&+v>0},
  {key:'interests',q:'Select interests (choose one or more, then click Finish):',type:'multi',choices:interestOptions},
+ {key:'additional_interests',q:'Any additional interests we did not list? Separate multiple interests with commas, or press skip.',type:'text',optional:true,validate:v=>!v || /^[a-zA-Z0-9\s,'&/-]{2,300}$/.test(v)},
 ];
 let idx=0;
 function msg(text,who='bot'){const d=document.createElement('div');d.className='msg '+who;d.innerHTML='<div class="bubble">'+text+'</div>';thread.appendChild(d);thread.scrollTop=thread.scrollHeight;}
@@ -101,6 +102,7 @@ function submit(){
  form.querySelector('[name="duration_days"]').value=answers.duration_days||'';
  form.querySelector('[name="travel_style"]').value=answers.travel_style||'';
  form.querySelector('[name="group_size"]').value=answers.group_size||'';
+ form.querySelector('[name="additional_interests"]').value=answers.additional_interests||'';
  interestInputs.forEach(i=>i.checked=(answers.interests||[]).includes(i.value));
 msg('Thanks! Submitting your inquiry now...','bot');
  thread.innerHTML=''; actions.innerHTML=''; inputWrap.style.display='none';

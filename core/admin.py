@@ -26,7 +26,7 @@ def finalize_and_send(modeladmin, request, queryset):
 class InquiryAdmin(admin.ModelAdmin):
     change_form_template = 'admin/core/inquiry/change_form.html'
     list_display = ('full_name','email','travel_type','destination','duration_days','status','created_at')
-    list_filter = ('travel_type','travel_style','status')
+    list_filter = ('travel_type','travel_style','status','destination')
     readonly_fields = ('created_at',)
     actions = [finalize_and_send]
 
