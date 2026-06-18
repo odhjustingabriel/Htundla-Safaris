@@ -1,13 +1,14 @@
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import Group, User
 from django.core.mail import send_mail
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from .django_compat import ensure_local_sqlite_inquiry_schema
-from .forms import InquiryForm, ProposalForm
-from .models import Destination, Inquiry, OperatorResponse
+from .forms import InquiryForm, ItineraryItemFormSet, ProposalForm, StaffRoleForm, StaffUserForm
+from .models import Destination, Inquiry, ItineraryItem, OperatorResponse
 from .recommender import generate_itinerary
 
 
@@ -113,11 +114,80 @@ def operator_inquiry_review(request, inquiry_id):
         'final_cost': response.final_cost,
         'proposal_notes': response.proposal_notes,
     })
+    items_by_day = {}
+    if hasattr(inquiry, 'itinerary'):
+        for item in inquiry.itinerary.items.order_by('day_number', 'time_slot', 'id'):
+            items_by_day.setdefault(item.day_number, []).append(item)
     return render(request, 'core/operator_inquiry_review.html', {
         'inquiry': inquiry,
         'response': response,
         'proposal_form': form,
+        'items_by_day': items_by_day,
     })
+
+
+@staff_member_required
+def edit_itinerary(request, inquiry_id):
+    ensure_local_sqlite_inquiry_schema()
+    inquiry = get_object_or_404(Inquiry.objects.select_related('destination'), id=inquiry_id)
+    if not hasattr(inquiry, 'itinerary'):
+        generate_itinerary(inquiry)
+    queryset = ItineraryItem.objects.filter(itinerary=inquiry.itinerary).order_by('day_number', 'time_slot', 'id')
+    formset = ItineraryItemFormSet(request.POST or None, queryset=queryset)
+    if request.method == 'POST' and formset.is_valid():
+        formset.save()
+        messages.success(request, 'Draft itinerary updated successfully.')
+        return redirect('operator_inquiry_review', inquiry_id=inquiry.id)
+    return render(request, 'core/edit_itinerary.html', {
+        'inquiry': inquiry,
+        'formset': formset,
+    })
+
+
+def _is_superuser(user):
+    return user.is_authenticated and user.is_superuser
+
+
+@user_passes_test(_is_superuser)
+def staff_role_create(request):
+    form = StaffRoleForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        role = form.save()
+        messages.success(request, f'Role "{role.name}" created successfully.')
+        return redirect('superuser_dashboard')
+    return render(request, 'core/staff_role_form.html', {'form': form, 'title': 'Create Staff Role'})
+
+
+@user_passes_test(_is_superuser)
+def staff_role_edit(request, role_id):
+    role = get_object_or_404(Group, id=role_id)
+    form = StaffRoleForm(request.POST or None, instance=role)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, f'Role "{role.name}" updated successfully.')
+        return redirect('superuser_dashboard')
+    return render(request, 'core/staff_role_form.html', {'form': form, 'title': f'Edit Staff Role: {role.name}'})
+
+
+@user_passes_test(_is_superuser)
+def staff_user_create(request):
+    form = StaffUserForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        user = form.save()
+        messages.success(request, f'Staff user "{user.username}" created successfully.')
+        return redirect('superuser_dashboard')
+    return render(request, 'core/staff_user_form.html', {'form': form, 'title': 'Create Staff User'})
+
+
+@user_passes_test(_is_superuser)
+def staff_user_edit(request, user_id):
+    staff_user = get_object_or_404(User, id=user_id)
+    form = StaffUserForm(request.POST or None, instance=staff_user)
+    if request.method == 'POST' and form.is_valid():
+        user = form.save()
+        messages.success(request, f'Staff user "{user.username}" updated successfully.')
+        return redirect('superuser_dashboard')
+    return render(request, 'core/staff_user_form.html', {'form': form, 'title': f'Edit Staff User: {staff_user.username}'})
 
 
 @staff_member_required
