@@ -5,6 +5,7 @@ from django.core.mail import send_mail
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from .django_compat import ensure_local_sqlite_inquiry_schema
 from .forms import InquiryForm, ProposalForm
 from .models import Destination, Inquiry, OperatorResponse
 from .recommender import generate_itinerary
@@ -19,6 +20,7 @@ def destinations(request):
 
 
 def contact_us(request):
+    ensure_local_sqlite_inquiry_schema()
     if request.method == 'POST':
         form = InquiryForm(request.POST)
         if form.is_valid():
@@ -56,6 +58,7 @@ def send_proposal(request, inquiry_id):
 
 
 def _filtered_inquiries(request):
+    ensure_local_sqlite_inquiry_schema()
     inquiries = Inquiry.objects.select_related('destination').prefetch_related('itinerary__items').order_by('-created_at')
     status = request.GET.get('status', '').strip()
     travel_type = request.GET.get('travel_type', '').strip()
@@ -100,6 +103,7 @@ def admin_dashboard(request):
 
 @staff_member_required
 def operator_inquiry_review(request, inquiry_id):
+    ensure_local_sqlite_inquiry_schema()
     inquiry = get_object_or_404(
         Inquiry.objects.select_related('destination').prefetch_related('itinerary__items'),
         id=inquiry_id,
