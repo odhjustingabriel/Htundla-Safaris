@@ -30,6 +30,12 @@ class InquiryForm(forms.ModelForm):
         return ', '.join(parts)
 
 
+    def clean_additional_interests(self):
+        value = self.cleaned_data.get('additional_interests', '')
+        parts = [part.strip() for part in value.split(',') if part.strip()]
+        return ', '.join(parts)
+
+
 class ProposalForm(forms.Form):
     final_cost = forms.DecimalField(required=False, min_value=0, max_digits=10, decimal_places=2)
     proposal_notes = forms.CharField(required=False, validators=[MaxLengthValidator(5000)], widget=forms.Textarea)
