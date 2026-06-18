@@ -14,7 +14,7 @@ Key code references:
 - The hidden Django form is rendered as `form.as_p` with CSRF protection. This keeps the normal Django POST workflow while presenting a conversational UI to the user.
 - JavaScript reads destination choices from the hidden form's `destination` field, then falls back to a hard-coded destination list if no database destinations are available.
 - JavaScript reads interest options from the hidden form's `interests` checkboxes so the chatbot uses the same allowed values as the backend form.
-- The `steps` array controls the conversation order: full name, email, phone number, travel type, destination, duration, travel style, group size, and interests.
+- The `steps` array controls the conversation order: full name, email, phone number, travel type, destination, duration, travel style, group size, selected interests, and free-text additional interests.
 
 Step-by-step:
 
@@ -35,7 +35,7 @@ The backend validates the same preference data again through `InquiryForm`. This
 Key code references:
 
 - `ALLOWED_INTERESTS` defines the controlled list of interest values accepted by the application.
-- `InquiryForm` exposes the submitted fields: full name, email, phone number, travel type, destination, duration, travel style, group size, and interests.
+- `InquiryForm` exposes the submitted fields: full name, email, phone number, travel type, destination, duration, travel style, group size, selected interests, and free-text additional interests.
 - `clean_destination()` confirms the submitted destination exists in the database.
 - `clean()` enforces the Safari duration rule again on the server: Safari trips must be between 3 and 5 days.
 
@@ -76,7 +76,7 @@ Step-by-step:
 
 The recommendation workflow depends on these model relationships:
 
-- `Inquiry` stores the visitor's preferences: travel type, destination, duration, travel style, group size, and interests.
+- `Inquiry` stores the visitor's preferences: travel type, destination, duration, travel style, group size, selected interests, and additional interests.
 - `Activity` stores possible itinerary activities for destinations. Each activity includes travel type, style, interest category, suitable time slot, day suitability, intensity, and base score.
 - `Itinerary` has a one-to-one relationship with `Inquiry`, meaning each inquiry gets one draft itinerary.
 - `ItineraryItem` belongs to an `Itinerary`, meaning each draft itinerary can contain many day/time-slot activities.
@@ -121,7 +121,7 @@ The `_score(activity, inquiry, phase, slot, used_titles)` helper starts with `ac
 | Rule | Score effect | Purpose |
 | --- | ---: | --- |
 | Activity style matches inquiry travel style | `+4` | Prefer Budget-friendly, Standard, or Luxury activities that match the user's selected style. |
-| Activity interest is in the user's selected interests | `+5` | Strongly prefer activities aligned to the user's stated interests. |
+| Activity interest is in the user's selected or additional interests | `+5` | Strongly prefer activities aligned to the user's stated selected interests or comma-separated additional interests. |
 | Activity day suitability matches the current phase, or is `Any` | `+3` | Prefer activities suitable for arrival, mid-trip, departure, or any day. |
 | Activity time slot matches the current slot, or is `Flexible`/`Full-day` | `+3` | Prefer activities that fit Morning, Afternoon, or Evening scheduling. |
 | Activity name has already been used | `-3` | Reduce repetition across the itinerary. |
@@ -150,12 +150,12 @@ Key code references:
 - `InquiryAdmin` lists inquiry details and exposes an admin action named `finalize_and_send`.
 - `finalize_and_send()` creates or retrieves an `OperatorResponse`, marks it finalized, records the operator and timestamp, sends an email, and updates the inquiry status to `Proposal Sent`.
 - The `send_proposal` view is staff-protected, validates `ProposalForm`, stores final cost and proposal notes, sends an email including itinerary text, and updates the inquiry status.
-- The operator dashboard shows recent inquiries with destination, status, itinerary item count, and an action link.
+- The staff dashboard shows filterable inquiry records with destination, travel type, status, itinerary item count, and a Review link to the dedicated operator review page. The superuser panel is separate and focuses on staff users, staff roles/groups, and permission-management links.
 
 Step-by-step operator workflow:
 
-1. Operator opens the Django admin or operator dashboard.
-2. Operator reviews the inquiry preferences and generated itinerary items.
+1. Operator opens the staff admin panel and uses filters to locate the inquiry.
+2. Operator clicks Review to open the separate inquiry review page, then reviews client details, preferences, additional interests, generated itinerary items, and proposal status.
 3. Operator adds proposal notes and final cost where needed.
 4. Operator sends/finalizes the proposal.
 5. The system records who finalized it, when it was sent, and updates the inquiry status to `Proposal Sent`.

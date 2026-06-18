@@ -36,6 +36,7 @@ class Inquiry(models.Model):
     travel_style = models.CharField(max_length=20, choices=style_choices)
     group_size = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     interests = models.JSONField(default=list)
+    additional_interests = models.TextField(blank=True)
     status = models.CharField(max_length=20, default='Draft Generated')
     created_at = models.DateTimeField(auto_now_add=True)
 

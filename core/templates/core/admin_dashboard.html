@@ -9,18 +9,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Paytone+One&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
   <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
-  <title>Operator Dashboard</title>
+  <title>{{ panel_title }}</title>
   <style>
-    .dashboard-wrap{padding-top:120px}
-    .dashboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-top:1.5rem}
-    .dash-card{background:#fff;border:1px solid #f0eded;border-radius:10px;padding:1.2rem;box-shadow:0 8px 20px rgba(0,0,0,.05)}
-    .dash-card h3{font-size:1rem;color:#666;margin-bottom:.5rem}
-    .dash-card p{font-size:1.8rem;font-weight:700;color:#481f1c}
-    .panel{margin-top:2rem;background:#fff;border-radius:10px;padding:1rem;border:1px solid #f0eded}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:.7rem;border-bottom:1px solid #eee;text-align:left;font-size:.95rem}
-    th{color:#481f1c}
-    .actions a{color:#481f1c;font-weight:600}
+    .dashboard-wrap{padding-top:120px}.dashboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-top:1.5rem}.dash-card{background:#fff;border:1px solid #f0eded;border-radius:10px;padding:1.2rem;box-shadow:0 8px 20px rgba(0,0,0,.05)}.dash-card h3{font-size:1rem;color:#666;margin-bottom:.5rem}.dash-card p{font-size:1.8rem;font-weight:700;color:#481f1c}.panel{margin-top:2rem;background:#fff;border-radius:10px;padding:1rem;border:1px solid #f0eded}table{width:100%;border-collapse:collapse}th,td{padding:.7rem;border-bottom:1px solid #eee;text-align:left;font-size:.95rem}th{color:#481f1c}.actions a,.button-link{display:inline-block;color:#fff;background:#481f1c;border-radius:6px;padding:.45rem .75rem;font-weight:600;text-decoration:none}.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.75rem;align-items:end}.filters label{display:block;font-weight:600;color:#481f1c;margin-bottom:.25rem}.filters input,.filters select{width:100%;padding:.55rem;border:1px solid #ccc;border-radius:6px}.muted{color:#666;font-size:.9rem}.top-links{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1rem}
   </style>
 </head>
 <body>
@@ -30,12 +21,16 @@
     <li><a href="{% url 'index' %}">Home</a></li>
     <li><a href="{% url 'destinations' %}">Destinations</a></li>
     <li><a href="{% url 'contactus' %}">Contact Us</a></li>
-    <li><a href="/admin/">Django Admin</a></li>
+    {% if is_superuser_panel %}<li><a href="{% url 'superuser_dashboard' %}">Superuser Panel</a></li>{% endif %}
   </ul>
 </header>
 
 <section class="dashboard-wrap">
-  <div class="title"><h2>Operator Dashboard</h2></div>
+  <div class="title"><h2>{{ panel_title }}</h2></div>
+  <div class="top-links">
+    <a class="button-link" href="{% url 'admin_dashboard' %}">Staff Inquiry Panel</a>
+    {% if is_superuser_panel %}<a class="button-link" href="{% url 'superuser_dashboard' %}">Manage Staff & Roles</a>{% endif %}
+  </div>
   <div class="dashboard-grid">
     <div class="dash-card"><h3>Total Inquiries</h3><p>{{ total_inquiries }}</p></div>
     <div class="dash-card"><h3>Draft Generated</h3><p>{{ draft_count }}</p></div>
@@ -44,32 +39,29 @@
   </div>
 
   <div class="panel">
-    <h3>Recent Users</h3>
-    <table>
-      <thead><tr><th>Username</th><th>Email</th><th>Staff</th><th>Joined</th></tr></thead>
-      <tbody>
-        {% for user in recent_users %}
-          <tr><td>{{ user.username }}</td><td>{{ user.email|default:"-" }}</td><td>{{ user.is_staff }}</td><td>{{ user.date_joined|date:"Y-m-d H:i" }}</td></tr>
-        {% empty %}<tr><td colspan="4">No users found.</td></tr>{% endfor %}
-      </tbody>
-    </table>
+    <h3>Filter Records</h3>
+    <form class="filters" method="get">
+      <div><label for="q">Search client/email</label><input id="q" name="q" value="{{ filters.q }}" placeholder="Name or email"></div>
+      <div><label for="status">Status</label><select id="status" name="status"><option value="">All statuses</option><option value="Draft Generated" {% if filters.status == 'Draft Generated' %}selected{% endif %}>Draft Generated</option><option value="Proposal Sent" {% if filters.status == 'Proposal Sent' %}selected{% endif %}>Proposal Sent</option></select></div>
+      <div><label for="travel_type">Travel Type</label><select id="travel_type" name="travel_type"><option value="">All travel types</option><option value="Safari" {% if filters.travel_type == 'Safari' %}selected{% endif %}>Safari</option><option value="MICE" {% if filters.travel_type == 'MICE' %}selected{% endif %}>MICE</option></select></div>
+      <div><label for="destination">Destination</label><select id="destination" name="destination"><option value="">All destinations</option>{% for destination in destinations %}<option value="{{ destination.id }}" {% if filters.destination == destination.id|stringformat:'s' %}selected{% endif %}>{{ destination.name }}</option>{% endfor %}</select></div>
+      <div><button class="button-link" type="submit">Apply Filters</button></div>
+    </form>
   </div>
+
+  {% if is_superuser_panel %}
+  <div class="panel">
+    <h3>Recent Users</h3>
+    <table><thead><tr><th>Username</th><th>Email</th><th>Staff</th><th>Joined</th></tr></thead><tbody>{% for user in recent_users %}<tr><td>{{ user.username }}</td><td>{{ user.email|default:"-" }}</td><td>{{ user.is_staff }}</td><td>{{ user.date_joined|date:"Y-m-d H:i" }}</td></tr>{% empty %}<tr><td colspan="4">No users found.</td></tr>{% endfor %}</tbody></table>
+  </div>
+  {% endif %}
 
   <div class="panel">
     <h3>Inquiries & Generated Itineraries</h3>
+    <p class="muted">Review opens a dedicated operator page instead of the Django admin change form.</p>
     <table>
-      <thead><tr><th>Client</th><th>Destination</th><th>Status</th><th>Itinerary Items</th><th>Action</th></tr></thead>
-      <tbody>
-        {% for inquiry in inquiries %}
-          <tr>
-            <td>{{ inquiry.full_name }}<br><small>{{ inquiry.email }}</small></td>
-            <td>{{ inquiry.destination.name }}</td>
-            <td>{{ inquiry.status }}</td>
-            <td>{% if inquiry.itinerary %}{{ inquiry.itinerary.items.count }}{% else %}0{% endif %}</td>
-            <td class="actions"><a href="/admin/core/inquiry/{{ inquiry.id }}/change/">Review</a></td>
-          </tr>
-        {% empty %}<tr><td colspan="5">No inquiries found.</td></tr>{% endfor %}
-      </tbody>
+      <thead><tr><th>Client</th><th>Destination</th><th>Travel Type</th><th>Status</th><th>Itinerary Items</th><th>Action</th></tr></thead>
+      <tbody>{% for inquiry in inquiries %}<tr><td>{{ inquiry.full_name }}<br><small>{{ inquiry.email }}</small></td><td>{{ inquiry.destination.name }}</td><td>{{ inquiry.travel_type }}</td><td>{{ inquiry.status }}</td><td>{% if inquiry.itinerary %}{{ inquiry.itinerary.items.count }}{% else %}0{% endif %}</td><td class="actions"><a href="{% url 'operator_inquiry_review' inquiry.id %}">Review</a></td></tr>{% empty %}<tr><td colspan="6">No inquiries found.</td></tr>{% endfor %}</tbody>
     </table>
   </div>
 </section>
