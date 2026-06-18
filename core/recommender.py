@@ -7,11 +7,17 @@ def _phase(day, total):
     return 'Arrival' if day == 1 else ('Departure' if day == total else 'Mid-trip')
 
 
+def _interest_values(inquiry):
+    selected = inquiry.interests or []
+    additional = [part.strip() for part in inquiry.additional_interests.split(',') if part.strip()]
+    return {interest.lower() for interest in [*selected, *additional]}
+
+
 def _score(activity, inquiry, phase, slot, used_titles):
     score = activity.base_score
     if activity.style == inquiry.travel_style:
         score += 4
-    if activity.interest in inquiry.interests:
+    if activity.interest.lower() in _interest_values(inquiry):
         score += 5
     if activity.day_suitability in (phase, 'Any'):
         score += 3

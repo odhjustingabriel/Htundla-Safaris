@@ -7,20 +7,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Paytone+One&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
   <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
-  <title>Operator Dashboard</title>
+  <title>{{ panel_title }}</title>
   <style>
-    .dashboard-wrap{padding-top:120px}
-    .dashboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-top:1.5rem}
-    .dash-card{background:#fff;border:1px solid #f0eded;border-radius:10px;padding:1.2rem;box-shadow:0 8px 20px rgba(0,0,0,.05)}
-    .dash-card h3{font-size:1rem;color:#666;margin-bottom:.5rem}
-    .dash-card p{font-size:1.8rem;font-weight:700;color:#481f1c}
-    .panel{margin-top:2rem;background:#fff;border-radius:10px;padding:1rem;border:1px solid #f0eded}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:.7rem;border-bottom:1px solid #eee;text-align:left;font-size:.95rem}
-    th{color:#481f1c}
-    .actions a{color:#481f1c;font-weight:600}
+    :root{--brown:#481f1c;--rust:#a03f2d;--cream:#fff8f1;--sand:#f4e4d3;--ink:#2d1b18;--muted:#77635d;--line:#ead8c8;--shadow:0 18px 45px rgba(72,31,28,.12)}
+    body{background:linear-gradient(135deg,#fffaf4 0%,#f7eadc 45%,#fff 100%);font-family:'Poppins',sans-serif;color:var(--ink)}
+    header{backdrop-filter:blur(14px);background:rgba(255,248,241,.94);box-shadow:0 10px 30px rgba(72,31,28,.08)}
+    .dashboard-wrap{padding:130px 8% 48px}.eyebrow{text-transform:uppercase;letter-spacing:.18em;color:var(--rust);font-weight:700;font-size:.78rem}.hero-panel{background:linear-gradient(135deg,var(--brown),#6f2d24);border-radius:24px;padding:2rem;color:#fff;box-shadow:var(--shadow);display:flex;justify-content:space-between;gap:1rem;align-items:center}.hero-panel h2{font-size:2.2rem;color:#fff;margin:.2rem 0}.hero-panel p{color:#f9e5da}.top-links{display:flex;gap:.75rem;flex-wrap:wrap}.button-link,.actions a{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:999px;background:var(--brown);color:#fff;padding:.7rem 1rem;font-weight:700;text-decoration:none;box-shadow:0 8px 18px rgba(72,31,28,.16);cursor:pointer}.button-link.secondary{background:#fff;color:var(--brown)}.dashboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem;margin-top:1.5rem}.dash-card,.panel{background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:18px;padding:1.2rem;box-shadow:var(--shadow)}.dash-card h3{font-size:.85rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.dash-card p{font-size:2rem;font-weight:800;color:var(--brown);margin-top:.4rem}.panel{margin-top:1.25rem}.panel-head{display:flex;justify-content:space-between;gap:1rem;align-items:center;margin-bottom:1rem}.panel h3{color:var(--brown);font-size:1.15rem}.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.85rem;align-items:end}.filters label{display:block;font-weight:700;color:var(--brown);margin-bottom:.3rem}.filters input,.filters select{width:100%;padding:.75rem;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}table{width:100%;border-collapse:separate;border-spacing:0 .65rem}th{color:var(--brown);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;text-align:left;padding:.5rem .75rem}td{background:#fff;padding:.85rem .75rem;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}td:first-child{border-left:1px solid var(--line);border-radius:14px 0 0 14px}td:last-child{border-right:1px solid var(--line);border-radius:0 14px 14px 0}.badge{display:inline-block;border-radius:999px;padding:.35rem .65rem;background:var(--cream);color:var(--rust);font-weight:700;font-size:.8rem}.muted{color:var(--muted);font-size:.92rem}.client-name{font-weight:800;color:var(--brown)}
   </style>
 </head>
 <body>
@@ -30,12 +23,16 @@
     <li><a href="{% url 'index' %}">Home</a></li>
     <li><a href="{% url 'destinations' %}">Destinations</a></li>
     <li><a href="{% url 'contactus' %}">Contact Us</a></li>
-    <li><a href="/admin/">Django Admin</a></li>
+    {% if is_superuser_panel %}<li><a href="{% url 'superuser_dashboard' %}">Superuser Panel</a></li>{% endif %}
   </ul>
 </header>
 
 <section class="dashboard-wrap">
-  <div class="title"><h2>Operator Dashboard</h2></div>
+  <div class="hero-panel">
+    <div><span class="eyebrow">Htundla Safaris operations</span><h2>{{ panel_title }}</h2><p>Review inquiries, filter records, and prepare polished safari proposals.</p></div>
+    <div class="top-links"><a class="button-link secondary" href="{% url 'admin_dashboard' %}">Staff Inquiry Panel</a>{% if is_superuser_panel %}<a class="button-link secondary" href="{% url 'superuser_dashboard' %}">Manage Staff & Roles</a>{% endif %}</div>
+  </div>
+
   <div class="dashboard-grid">
     <div class="dash-card"><h3>Total Inquiries</h3><p>{{ total_inquiries }}</p></div>
     <div class="dash-card"><h3>Draft Generated</h3><p>{{ draft_count }}</p></div>
@@ -44,32 +41,21 @@
   </div>
 
   <div class="panel">
-    <h3>Recent Users</h3>
-    <table>
-      <thead><tr><th>Username</th><th>Email</th><th>Staff</th><th>Joined</th></tr></thead>
-      <tbody>
-        {% for user in recent_users %}
-          <tr><td>{{ user.username }}</td><td>{{ user.email|default:"-" }}</td><td>{{ user.is_staff }}</td><td>{{ user.date_joined|date:"Y-m-d H:i" }}</td></tr>
-        {% empty %}<tr><td colspan="4">No users found.</td></tr>{% endfor %}
-      </tbody>
-    </table>
+    <div class="panel-head"><div><h3>Filter Records</h3><p class="muted">Sort inquiries by customer, status, travel type, or destination.</p></div></div>
+    <form class="filters" method="get">
+      <div><label for="q">Search client/email</label><input id="q" name="q" value="{{ filters.q }}" placeholder="Name or email"></div>
+      <div><label for="status">Status</label><select id="status" name="status"><option value="">All statuses</option><option value="Draft Generated" {% if filters.status == 'Draft Generated' %}selected{% endif %}>Draft Generated</option><option value="Proposal Sent" {% if filters.status == 'Proposal Sent' %}selected{% endif %}>Proposal Sent</option></select></div>
+      <div><label for="travel_type">Travel Type</label><select id="travel_type" name="travel_type"><option value="">All travel types</option><option value="Safari" {% if filters.travel_type == 'Safari' %}selected{% endif %}>Safari</option><option value="MICE" {% if filters.travel_type == 'MICE' %}selected{% endif %}>MICE</option></select></div>
+      <div><label for="destination">Destination</label><select id="destination" name="destination"><option value="">All destinations</option>{% for destination in destinations %}<option value="{{ destination.id }}" {% if filters.destination == destination.id|stringformat:'s' %}selected{% endif %}>{{ destination.name }}</option>{% endfor %}</select></div>
+      <div><button class="button-link" type="submit">Apply Filters</button></div>
+    </form>
   </div>
 
   <div class="panel">
-    <h3>Inquiries & Generated Itineraries</h3>
+    <div class="panel-head"><div><h3>Inquiries & Generated Itineraries</h3><p class="muted">Review opens a dedicated operator page instead of the Django admin change form.</p></div></div>
     <table>
-      <thead><tr><th>Client</th><th>Destination</th><th>Status</th><th>Itinerary Items</th><th>Action</th></tr></thead>
-      <tbody>
-        {% for inquiry in inquiries %}
-          <tr>
-            <td>{{ inquiry.full_name }}<br><small>{{ inquiry.email }}</small></td>
-            <td>{{ inquiry.destination.name }}</td>
-            <td>{{ inquiry.status }}</td>
-            <td>{% if inquiry.itinerary %}{{ inquiry.itinerary.items.count }}{% else %}0{% endif %}</td>
-            <td class="actions"><a href="/admin/core/inquiry/{{ inquiry.id }}/change/">Review</a></td>
-          </tr>
-        {% empty %}<tr><td colspan="5">No inquiries found.</td></tr>{% endfor %}
-      </tbody>
+      <thead><tr><th>Client</th><th>Destination</th><th>Travel Type</th><th>Status</th><th>Itinerary Items</th><th>Action</th></tr></thead>
+      <tbody>{% for inquiry in inquiries %}<tr><td><span class="client-name">{{ inquiry.full_name }}</span><br><small>{{ inquiry.email }}</small></td><td>{{ inquiry.destination.name }}</td><td><span class="badge">{{ inquiry.travel_type }}</span></td><td>{{ inquiry.status }}</td><td>{% if inquiry.itinerary %}{{ inquiry.itinerary.items.count }}{% else %}0{% endif %}</td><td class="actions"><a href="{% url 'operator_inquiry_review' inquiry.id %}">Review</a></td></tr>{% empty %}<tr><td colspan="6">No inquiries found.</td></tr>{% endfor %}</tbody>
     </table>
   </div>
 </section>
