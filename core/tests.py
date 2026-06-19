@@ -117,19 +117,48 @@ class StaffAdminPanelPageTests(TestCase):
         self.assertContains(response, 'permissions-panel')
         self.assertContains(response, 'Select only the permissions this role needs')
 
-    def test_superuser_cannot_access_staff_dashboard(self):
+    def test_staff_dashboard_redirects_anonymous_users_to_staff_login(self):
+        response = self.client.get(reverse('admin_dashboard'))
+
+        self.assertRedirects(response, f"{reverse('staff_login')}?next={reverse('admin_dashboard')}")
+
+    def test_superuser_can_access_staff_dashboard(self):
         self.client.force_login(self.superuser)
 
         response = self.client.get(reverse('admin_dashboard'))
 
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Staff Admin Panel')
 
-    def test_staff_user_cannot_access_superuser_dashboard(self):
-        self.client.force_login(self.staff_user)
-
+    def test_superuser_dashboard_redirects_anonymous_users_to_superuser_login(self):
         response = self.client.get(reverse('superuser_dashboard'))
 
-        self.assertEqual(response.status_code, 403)
+        self.assertRedirects(response, f"{reverse('superuser_login')}?next={reverse('superuser_dashboard')}")
+
+    def test_staff_user_cannot_log_in_to_superuser_dashboard(self):
+        response = self.client.post(reverse('superuser_login'), {
+            'username': 'operator',
+            'password': 'password12345',
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'This account is not allowed to access the Superuser Admin Panel')
+
+    def test_staff_login_accepts_staff_credentials(self):
+        response = self.client.post(reverse('staff_login'), {
+            'username': 'operator',
+            'password': 'password12345',
+        })
+
+        self.assertRedirects(response, reverse('admin_dashboard'))
+
+    def test_superuser_login_accepts_superuser_credentials(self):
+        response = self.client.post(reverse('superuser_login'), {
+            'username': 'superadmin',
+            'password': 'password12345',
+        })
+
+        self.assertRedirects(response, reverse('superuser_dashboard'))
 
     def test_review_orders_itinerary_slots_chronologically(self):
         itinerary = Itinerary.objects.create(

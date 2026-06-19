@@ -116,7 +116,7 @@ section{
     background: var(--bg-color);
     transform: scale(1.1);
 }
-header .sticky{
+header.sticky{
     background: var(--bg-color);
     padding: 10px 18%;
     box-shadow: rgba(35,35,38,0.1) 0px 10px 10px -10px;
@@ -127,9 +127,10 @@ header .sticky{
 .sticky .navbar a{
     color: var(--text-color);
 }
-.sticky .navbar a:hover{
+header.sticky .navbar a:hover,
+header.sticky .navbar a:focus-visible{
     background: #481f1c;
-    color: #fff;
+    color: #fff !important;
     text-shadow: 0 0 8px rgba(255,255,255,0.75);
 }
 .text h2{

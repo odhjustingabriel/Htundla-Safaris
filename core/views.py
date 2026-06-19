@@ -1,11 +1,13 @@
 from django.contrib import messages
-from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth import login
 from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group, User
 from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.db.models import Case, IntegerField, Q, Value, When
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils import timezone
 from .django_compat import ensure_local_sqlite_inquiry_schema
 from .forms import InquiryForm, ItineraryItemFormSet, ProposalForm, StaffRoleForm, StaffUserForm
@@ -24,6 +26,53 @@ SLOT_ORDER = Case(
 
 def _chronological_items(queryset):
     return queryset.alias(slot_order=SLOT_ORDER).order_by('day_number', 'slot_order', 'id')
+
+
+def _is_staff_portal_user(user):
+    return user.is_authenticated and user.is_staff
+
+
+def _is_superuser(user):
+    return user.is_authenticated and user.is_superuser
+
+
+def _portal_login(request, *, portal_name, required_check, redirect_name, template_name):
+    if required_check(request.user):
+        return redirect(redirect_name)
+
+    form = AuthenticationForm(request, data=request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        user = form.get_user()
+        if required_check(user):
+            login(request, user)
+            next_url = request.GET.get('next')
+            if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
+                return redirect(next_url)
+            return redirect(redirect_name)
+        form.add_error(None, f'This account is not allowed to access the {portal_name}.')
+
+    return render(request, template_name, {'form': form, 'portal_name': portal_name})
+
+
+def staff_login(request):
+    return _portal_login(
+        request,
+        portal_name='Staff Portal',
+        required_check=lambda user: user.is_authenticated and user.is_staff,
+        redirect_name='admin_dashboard',
+        template_name='core/portal_login.html',
+    )
+
+
+def superuser_login(request):
+    return _portal_login(
+        request,
+        portal_name='Superuser Admin Panel',
+        required_check=lambda user: user.is_authenticated and user.is_superuser,
+        redirect_name='superuser_dashboard',
+        template_name='core/portal_login.html',
+    )
+
 
 def index(request):
     return render(request, 'core/index.html')
@@ -47,7 +96,7 @@ def contact_us(request):
     return render(request, 'core/contactus.html', {'form': form})
 
 
-@staff_member_required
+@user_passes_test(_is_staff_portal_user, login_url='staff_login')
 def send_proposal(request, inquiry_id):
     inquiry = get_object_or_404(Inquiry, id=inquiry_id)
     response, _ = OperatorResponse.objects.get_or_create(inquiry=inquiry)
@@ -96,7 +145,7 @@ def _filtered_inquiries(request):
     }
 
 
-@staff_member_required
+@user_passes_test(_is_staff_portal_user, login_url='staff_login')
 def admin_dashboard(request):
     if request.user.is_superuser:
         raise PermissionDenied('Superusers must use the superuser admin panel only.')
@@ -114,7 +163,7 @@ def admin_dashboard(request):
     return render(request, 'core/admin_dashboard.html', ctx)
 
 
-@staff_member_required
+@user_passes_test(_is_staff_portal_user, login_url='staff_login')
 def operator_inquiry_review(request, inquiry_id):
     ensure_local_sqlite_inquiry_schema()
     inquiry = get_object_or_404(
@@ -138,7 +187,7 @@ def operator_inquiry_review(request, inquiry_id):
     })
 
 
-@staff_member_required
+@user_passes_test(_is_staff_portal_user, login_url='staff_login')
 def edit_itinerary(request, inquiry_id):
     ensure_local_sqlite_inquiry_schema()
     inquiry = get_object_or_404(Inquiry.objects.select_related('destination'), id=inquiry_id)
@@ -156,11 +205,7 @@ def edit_itinerary(request, inquiry_id):
     })
 
 
-def _is_superuser(user):
-    return user.is_authenticated and user.is_superuser
-
-
-@user_passes_test(_is_superuser)
+@user_passes_test(_is_superuser, login_url='superuser_login')
 def staff_role_create(request):
     form = StaffRoleForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
@@ -170,7 +215,7 @@ def staff_role_create(request):
     return render(request, 'core/staff_role_form.html', {'form': form, 'title': 'Create Staff Role'})
 
 
-@user_passes_test(_is_superuser)
+@user_passes_test(_is_superuser, login_url='superuser_login')
 def staff_role_edit(request, role_id):
     role = get_object_or_404(Group, id=role_id)
     form = StaffRoleForm(request.POST or None, instance=role)
@@ -181,7 +226,7 @@ def staff_role_edit(request, role_id):
     return render(request, 'core/staff_role_form.html', {'form': form, 'title': f'Edit Staff Role: {role.name}'})
 
 
-@user_passes_test(_is_superuser)
+@user_passes_test(_is_superuser, login_url='superuser_login')
 def staff_user_create(request):
     form = StaffUserForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
@@ -191,7 +236,7 @@ def staff_user_create(request):
     return render(request, 'core/staff_user_form.html', {'form': form, 'title': 'Create Staff User'})
 
 
-@user_passes_test(_is_superuser)
+@user_passes_test(_is_superuser, login_url='superuser_login')
 def staff_user_edit(request, user_id):
     staff_user = get_object_or_404(User, id=user_id)
     form = StaffUserForm(request.POST or None, instance=staff_user)
@@ -202,10 +247,8 @@ def staff_user_edit(request, user_id):
     return render(request, 'core/staff_user_form.html', {'form': form, 'title': f'Edit Staff User: {staff_user.username}'})
 
 
-@staff_member_required
+@user_passes_test(_is_superuser, login_url='superuser_login')
 def superuser_dashboard(request):
-    if not request.user.is_superuser:
-        raise PermissionDenied('Only superusers can access the superuser admin panel.')
     groups = Group.objects.order_by('name')
     ctx = {
         'staff_users': User.objects.filter(is_staff=True).order_by('username'),
