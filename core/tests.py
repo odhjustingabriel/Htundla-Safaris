@@ -116,3 +116,52 @@ class StaffAdminPanelPageTests(TestCase):
         self.assertContains(response, 'Create Staff Role')
         self.assertContains(response, 'permissions-panel')
         self.assertContains(response, 'Select only the permissions this role needs')
+
+    def test_superuser_cannot_access_staff_dashboard(self):
+        self.client.force_login(self.superuser)
+
+        response = self.client.get(reverse('admin_dashboard'))
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_staff_user_cannot_access_superuser_dashboard(self):
+        self.client.force_login(self.staff_user)
+
+        response = self.client.get(reverse('superuser_dashboard'))
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_review_orders_itinerary_slots_chronologically(self):
+        itinerary = Itinerary.objects.create(
+            inquiry=self.inquiry,
+            summary='Out-of-order source items.',
+        )
+        ItineraryItem.objects.create(
+            itinerary=itinerary,
+            day_number=1,
+            time_slot='Evening',
+            title='Dinner under the stars',
+            notes='Close the day.',
+        )
+        ItineraryItem.objects.create(
+            itinerary=itinerary,
+            day_number=1,
+            time_slot='Morning',
+            title='Sunrise game drive',
+            notes='Start early.',
+        )
+        ItineraryItem.objects.create(
+            itinerary=itinerary,
+            day_number=1,
+            time_slot='Afternoon',
+            title='Bush lunch',
+            notes='Relax after lunch.',
+        )
+        self.client.force_login(self.staff_user)
+
+        response = self.client.get(reverse('operator_inquiry_review', args=[self.inquiry.pk]))
+        content = response.content.decode()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertLess(content.index('Sunrise game drive'), content.index('Bush lunch'))
+        self.assertLess(content.index('Bush lunch'), content.index('Dinner under the stars'))

@@ -63,6 +63,7 @@ header{
 .navbar a:hover {
     background: #481f1c; /* Brown-ish background on hover */
     color: white; /* White text on hover */
+    text-shadow: 0 0 8px rgba(255,255,255,0.75);
     box-shadow: 5px 10px 30px rgb(85 85 85 / 20%);
     border-radius: 4px;
 }
@@ -125,6 +126,11 @@ header .sticky{
 }
 .sticky .navbar a{
     color: var(--text-color);
+}
+.sticky .navbar a:hover{
+    background: #481f1c;
+    color: #fff;
+    text-shadow: 0 0 8px rgba(255,255,255,0.75);
 }
 .text h2{
     font-size: var(--h2-font);
