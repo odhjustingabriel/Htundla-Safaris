@@ -2,8 +2,9 @@ from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import Group, User
+from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
-from django.db.models import Q
+from django.db.models import Case, IntegerField, Q, Value, When
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from .django_compat import ensure_local_sqlite_inquiry_schema
@@ -11,6 +12,18 @@ from .forms import InquiryForm, ItineraryItemFormSet, ProposalForm, StaffRoleFor
 from .models import Destination, Inquiry, ItineraryItem, OperatorResponse
 from .recommender import generate_itinerary
 
+
+SLOT_ORDER = Case(
+    When(time_slot='Morning', then=Value(1)),
+    When(time_slot='Afternoon', then=Value(2)),
+    When(time_slot='Evening', then=Value(3)),
+    default=Value(4),
+    output_field=IntegerField(),
+)
+
+
+def _chronological_items(queryset):
+    return queryset.alias(slot_order=SLOT_ORDER).order_by('day_number', 'slot_order', 'id')
 
 def index(request):
     return render(request, 'core/index.html')
@@ -49,7 +62,7 @@ def send_proposal(request, inquiry_id):
         response.final_cost = proposal_form.cleaned_data.get('final_cost') or response.final_cost
         response.proposal_notes = proposal_form.cleaned_data.get('proposal_notes', '')
         response.save()
-        itinerary_text = '\n'.join([f"Day {i.day_number} {i.time_slot}: {i.title}" for i in inquiry.itinerary.items.all()]) if hasattr(inquiry, 'itinerary') else ''
+        itinerary_text = '\n'.join([f"Day {i.day_number} {i.time_slot}: {i.title}" for i in _chronological_items(inquiry.itinerary.items.all())]) if hasattr(inquiry, 'itinerary') else ''
         send_mail('Your Htundla Proposal', f'Hello {inquiry.full_name},\n\n{response.proposal_notes}\nFinal cost: {response.final_cost}\n\n{itinerary_text}', None, [inquiry.email])
         inquiry.status = 'Proposal Sent'
         inquiry.save(update_fields=['status'])
@@ -85,16 +98,15 @@ def _filtered_inquiries(request):
 
 @staff_member_required
 def admin_dashboard(request):
+    if request.user.is_superuser:
+        raise PermissionDenied('Superusers must use the superuser admin panel only.')
     inquiries, filters = _filtered_inquiries(request)
-    recent_users = User.objects.order_by('-date_joined')[:10] if request.user.is_superuser else []
     ctx = {
-        'panel_title': 'Superuser Admin Panel' if request.user.is_superuser else 'Staff Admin Panel',
-        'is_superuser_panel': request.user.is_superuser,
+        'panel_title': 'Staff Admin Panel',
         'total_inquiries': Inquiry.objects.count(),
         'draft_count': Inquiry.objects.filter(status='Draft Generated').count(),
         'sent_count': Inquiry.objects.filter(status='Proposal Sent').count(),
         'total_users': User.objects.count(),
-        'recent_users': recent_users,
         'inquiries': inquiries[:50],
         'destinations': Destination.objects.order_by('name'),
         'filters': filters,
@@ -116,7 +128,7 @@ def operator_inquiry_review(request, inquiry_id):
     })
     items_by_day = {}
     if hasattr(inquiry, 'itinerary'):
-        for item in inquiry.itinerary.items.order_by('day_number', 'time_slot', 'id'):
+        for item in _chronological_items(inquiry.itinerary.items.all()):
             items_by_day.setdefault(item.day_number, []).append(item)
     return render(request, 'core/operator_inquiry_review.html', {
         'inquiry': inquiry,
@@ -132,7 +144,7 @@ def edit_itinerary(request, inquiry_id):
     inquiry = get_object_or_404(Inquiry.objects.select_related('destination'), id=inquiry_id)
     if not hasattr(inquiry, 'itinerary'):
         generate_itinerary(inquiry)
-    queryset = ItineraryItem.objects.filter(itinerary=inquiry.itinerary).order_by('day_number', 'time_slot', 'id')
+    queryset = _chronological_items(ItineraryItem.objects.filter(itinerary=inquiry.itinerary))
     formset = ItineraryItemFormSet(request.POST or None, queryset=queryset)
     if request.method == 'POST' and formset.is_valid():
         formset.save()
@@ -193,8 +205,7 @@ def staff_user_edit(request, user_id):
 @staff_member_required
 def superuser_dashboard(request):
     if not request.user.is_superuser:
-        messages.error(request, 'Only superusers can access the superuser admin panel.')
-        return redirect('admin_dashboard')
+        raise PermissionDenied('Only superusers can access the superuser admin panel.')
     groups = Group.objects.order_by('name')
     ctx = {
         'staff_users': User.objects.filter(is_staff=True).order_by('username'),
