@@ -3,6 +3,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group, User
+from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.db.models import Case, IntegerField, Q, Value, When
 from django.shortcuts import get_object_or_404, redirect, render
@@ -142,6 +143,8 @@ def _filtered_inquiries(request):
 
 @login_required(login_url='staff_login')
 def admin_dashboard(request):
+    if request.user.is_superuser:
+        raise PermissionDenied('Superusers must use the superuser admin panel only.')
     inquiries, filters = _filtered_inquiries(request)
     ctx = {
         'panel_title': 'Staff Admin Panel',
