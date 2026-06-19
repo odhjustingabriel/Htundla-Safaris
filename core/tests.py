@@ -59,3 +59,60 @@ class InquiryAdminTests(TestCase):
         self.assertContains(response, 'Test Guest')
         self.assertContains(response, 'History')
         self.assertContains(response, 'Save')
+
+
+class StaffAdminPanelPageTests(TestCase):
+    def setUp(self):
+        self.superuser = User.objects.create_superuser(
+            username='superadmin',
+            email='superadmin@example.com',
+            password='password12345',
+        )
+        self.staff_user = User.objects.create_user(
+            username='operator',
+            email='operator@example.com',
+            password='password12345',
+            is_staff=True,
+        )
+        self.destination = Destination.objects.create(name='Serengeti')
+        self.inquiry = Inquiry.objects.create(
+            full_name='Panel Guest',
+            email='panel@example.com',
+            travel_type='Safari',
+            destination=self.destination,
+            duration_days=4,
+            travel_style='Luxury',
+            group_size=2,
+            interests=['Photography'],
+        )
+
+    def test_operator_dashboard_renders_for_staff_user(self):
+        self.client.force_login(self.staff_user)
+
+        response = self.client.get(reverse('admin_dashboard'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Staff Admin Panel')
+        self.assertContains(response, 'Panel Guest')
+        self.assertContains(response, 'Filter Records')
+
+    def test_staff_user_create_page_renders_with_matched_actions(self):
+        self.client.force_login(self.superuser)
+
+        response = self.client.get(reverse('staff_user_create'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Create Staff User')
+        self.assertContains(response, 'button primary')
+        self.assertContains(response, 'button secondary')
+        self.assertContains(response, 'Account Status')
+
+    def test_staff_role_create_page_renders_spaced_permission_grid(self):
+        self.client.force_login(self.superuser)
+
+        response = self.client.get(reverse('staff_role_create'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Create Staff Role')
+        self.assertContains(response, 'permissions-panel')
+        self.assertContains(response, 'Select only the permissions this role needs')
