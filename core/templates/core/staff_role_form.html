@@ -1,2 +1,34 @@
 {% load static %}
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}"><title>{{ title }}</title><style>:root{--brown:#481f1c;--cream:#fff8f1;--line:#ead8c8;--shadow:0 18px 45px rgba(72,31,28,.12)}body{background:linear-gradient(135deg,#fffaf4,#f7eadc 45%,#fff);font-family:Poppins,sans-serif}.wrap{padding:130px 8% 48px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:1.15rem;box-shadow:var(--shadow)}.button{display:inline-flex;border:0;background:var(--brown);color:#fff;border-radius:999px;padding:.72rem 1rem;text-decoration:none;font-weight:800;cursor:pointer}.field{margin:1rem 0}.field label{font-weight:800;color:var(--brown)}.field input{width:100%;padding:.75rem;border:1px solid var(--line);border-radius:12px}.checks{columns:2;max-height:460px;overflow:auto;background:var(--cream);padding:1rem;border-radius:12px}h2{color:var(--brown)}</style></head><body><header><div class="logo"><img src="{% static 'htundla-mainlogo2.png' %}" alt="Htundla Safaris logo"></div><ul class="navbar"><li><a href="{% url 'superuser_dashboard' %}">Superuser Panel</a></li></ul></header><section class="wrap"><div class="card"><h2>{{ title }}</h2><form method="post">{% csrf_token %}<div class="field"><label for="id_name">Role Name</label>{{ form.name }}</div><div class="field"><label>Permissions</label><div class="checks">{{ form.permissions }}</div></div><button class="button" type="submit">Save Role</button> <a class="button" href="{% url 'superuser_dashboard' %}">Cancel</a></form></div></section></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Paytone+One&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+  <title>{{ title }}</title>
+  <style>
+    :root{--brown:#481f1c;--rust:#a03f2d;--cream:#fff8f1;--sand:#f4e4d3;--ink:#2d1b18;--muted:#77635d;--line:#ead8c8;--shadow:0 18px 45px rgba(72,31,28,.12)}
+    body{background:linear-gradient(135deg,#fffaf4 0%,#f7eadc 45%,#fff 100%);font-family:'Poppins',sans-serif;color:var(--ink)}
+    header{backdrop-filter:blur(14px);background:rgba(255,248,241,.94);box-shadow:0 10px 30px rgba(72,31,28,.08)}
+    .wrap{padding:130px 8% 56px;max-width:1100px;margin:0 auto}.eyebrow{text-transform:uppercase;letter-spacing:.18em;color:var(--rust);font-weight:700;font-size:.78rem}.card{background:rgba(255,255,255,.95);border:1px solid var(--line);border-radius:24px;padding:clamp(1.25rem,3vw,2.25rem);box-shadow:var(--shadow)}.form-head{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;border-bottom:1px solid var(--line);padding-bottom:1.1rem;margin-bottom:1.4rem}.form-head h2{color:var(--brown);font-size:clamp(1.7rem,3vw,2.3rem);margin:.15rem 0}.form-head p,.help-text{color:var(--muted);margin:0}.field{margin:1.15rem 0}.field label,.field legend{font-weight:800;color:var(--brown);display:block;margin-bottom:.4rem}.field input[type="text"]{width:100%;padding:.85rem 1rem;border:1px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);box-shadow:inset 0 1px 0 rgba(72,31,28,.03)}.permissions-panel{background:linear-gradient(135deg,var(--cream),#fff);border:1px solid var(--line);border-radius:18px;padding:1rem}.checks{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:.65rem;max-height:520px;overflow:auto;padding:.25rem}.checks div{margin:0}.checks label{display:flex;align-items:flex-start;gap:.55rem;background:#fff;border:1px solid rgba(234,216,200,.9);border-radius:14px;padding:.72rem .8rem;color:var(--ink);font-weight:600;line-height:1.35;box-shadow:0 6px 16px rgba(72,31,28,.05)}.checks input{accent-color:var(--rust);margin-top:.18rem;flex:0 0 auto}.actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.4rem}.button{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:999px;padding:.78rem 1.15rem;text-decoration:none;font-weight:800;cursor:pointer;box-shadow:0 8px 18px rgba(72,31,28,.16);transition:transform .2s ease,box-shadow .2s ease}.button:hover{transform:translateY(-1px);box-shadow:0 12px 24px rgba(72,31,28,.2)}.button.primary{background:var(--brown);color:#fff}.button.secondary{background:#fff;color:var(--brown);border:1px solid var(--line)}.errors{background:#fff1f1;border:1px solid #f2b7b7;color:#8a1f1f;border-radius:14px;padding:1rem;margin-bottom:1rem}
+    @media(max-width:720px){.form-head{display:block}.checks{grid-template-columns:1fr;max-height:none}.wrap{padding-inline:5%}}
+  </style>
+</head>
+<body>
+<header><div class="logo"><img src="{% static 'htundla-mainlogo2.png' %}" alt="Htundla Safaris logo"></div><ul class="navbar"><li><a href="{% url 'superuser_dashboard' %}">Superuser Panel</a></li></ul></header>
+<section class="wrap">
+  <div class="card">
+    <div class="form-head"><div><span class="eyebrow">Staff permissions</span><h2>{{ title }}</h2><p>Group related access into a clear role that can be assigned to staff users.</p></div><a class="button secondary" href="{% url 'superuser_dashboard' %}">Back to Panel</a></div>
+    {% if form.errors %}<div class="errors">{{ form.errors }}</div>{% endif %}
+    <form method="post">{% csrf_token %}
+      <div class="field"><label for="id_name">Role Name</label>{{ form.name }}</div>
+      <fieldset class="field permissions-panel"><legend>Permissions</legend><p class="help-text">Select only the permissions this role needs. The grid spacing keeps each option easy to scan.</p><div class="checks">{{ form.permissions }}</div></fieldset>
+      <div class="actions"><button class="button primary" type="submit">Save Role</button><a class="button secondary" href="{% url 'superuser_dashboard' %}">Cancel</a></div>
+    </form>
+  </div>
+</section>
+</body>
+</html>

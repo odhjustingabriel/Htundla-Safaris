@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Paytone+One&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
-  <title>{{ panel_title }}</title>
+  <title>Staff Admin Panel</title>
   <style>
     :root{--brown:#481f1c;--rust:#a03f2d;--cream:#fff8f1;--sand:#f4e4d3;--ink:#2d1b18;--muted:#77635d;--line:#ead8c8;--shadow:0 18px 45px rgba(72,31,28,.12)}
     body{background:linear-gradient(135deg,#fffaf4 0%,#f7eadc 45%,#fff 100%);font-family:'Poppins',sans-serif;color:var(--ink)}
@@ -23,14 +23,13 @@
     <li><a href="{% url 'index' %}">Home</a></li>
     <li><a href="{% url 'destinations' %}">Destinations</a></li>
     <li><a href="{% url 'contactus' %}">Contact Us</a></li>
-    {% if is_superuser_panel %}<li><a href="{% url 'superuser_dashboard' %}">Superuser Panel</a></li>{% endif %}
   </ul>
 </header>
 
 <section class="dashboard-wrap">
   <div class="hero-panel">
-    <div><span class="eyebrow">Htundla Safaris operations</span><h2>{{ panel_title }}</h2><p>Review inquiries, filter records, and prepare polished safari proposals.</p></div>
-    <div class="top-links"><a class="button-link secondary" href="{% url 'admin_dashboard' %}">Staff Inquiry Panel</a>{% if is_superuser_panel %}<a class="button-link secondary" href="{% url 'superuser_dashboard' %}">Manage Staff & Roles</a>{% endif %}</div>
+    <div><span class="eyebrow">Htundla Safaris operations</span><h2>Staff Admin Panel</h2><p>Review inquiries, filter records, and prepare polished safari proposals.</p></div>
+    <div class="top-links"><a class="button-link secondary" href="{% url 'admin_dashboard' %}">Staff Inquiry Panel</a></div>
   </div>
 
   <div class="dashboard-grid">
@@ -50,7 +49,6 @@
       <div><button class="button-link" type="submit">Apply Filters</button></div>
     </form>
   </div>
-  {% endif %}
 
   <div class="panel">
     <div class="panel-head"><div><h3>Inquiries & Generated Itineraries</h3><p class="muted">Review opens a dedicated operator page instead of the Django admin change form.</p></div></div>
