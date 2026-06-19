@@ -13,8 +13,9 @@ This project turns the existing static website into a Django-powered workflow wh
 2. Preferences are validated on frontend + backend.
 3. Inquiry data is stored in the database.
 4. A draft itinerary is auto-generated.
-5. Operators review/finalize proposals in Django admin.
-6. Proposal communication is sent by email (console backend for development by default).
+5. Staff users review/finalize proposals in the dedicated staff portal.
+6. Superusers manage staff users and roles in the separate superuser portal.
+7. Proposal communication is sent by email (console backend for development by default).
 
 ---
 
@@ -25,8 +26,11 @@ This project turns the existing static website into a Django-powered workflow wh
   - Contact Us
 - Guided chatbot conversation for inquiry intake
 - Rule-based itinerary recommendation engine
-- Centralized admin/operator review workflow
+- Dedicated staff portal for inquiry review and proposal finalization
+- Dedicated superuser portal for staff user and role management
+- Styled staff/superuser login pages that match the client-facing site
 - Finalization and proposal sending flow
+- Chronological itinerary display and emails ordered by Morning, Afternoon, then Evening
 - Seed command for destinations and activities
 
 ---
@@ -102,22 +106,25 @@ Open in browser:
 - `http://127.0.0.1:8000/destinations/`
 - `http://127.0.0.1:8000/contactus/`
 - `http://127.0.0.1:8000/admin/`
-- `http://127.0.0.1:8000/operator/dashboard/` *(staff users only)*
+- `http://127.0.0.1:8000/staff/login/`
+- `http://127.0.0.1:8000/operator/dashboard/` *(staff portal)*
+- `http://127.0.0.1:8000/superuser/login/`
+- `http://127.0.0.1:8000/superuser/dashboard/` *(superuser portal)*
 
 
-## Accessing the Operator Dashboard
+## Staff and Superuser Portals
 
-The operator dashboard is available at:
-- `http://127.0.0.1:8000/operator/dashboard/`
-- `http://127.0.0.1:8000/operator/dashboard`
+The project has two in-app portal entry points in addition to Django's built-in `/admin/`:
 
-> If you still get a 404, ensure your local branch includes the latest URL config and restart the dev server.
+| Portal | Login URL | Dashboard URL | Who can access | Purpose |
+| --- | --- | --- | --- | --- |
+| Staff Portal | `http://127.0.0.1:8000/staff/login/` | `http://127.0.0.1:8000/operator/dashboard/` | Any authenticated portal user, including superusers | Review customer inquiries, filter records, review generated itineraries, edit drafts, and send proposals. |
+| Superuser Portal | `http://127.0.0.1:8000/superuser/login/` | `http://127.0.0.1:8000/superuser/dashboard/` | Authenticated users with `is_superuser=True` | Create/edit staff users and create/edit staff roles/groups. |
 
-### Who can access it
-- Only **staff/admin users** can access this page (`@staff_member_required`).
+The staff and superuser portals intentionally do **not** cross-link to each other in their navigation. Use the correct login URL for the portal you want to access.
 
-### Steps to access
-1. Create an admin/staff account (if you do not have one):
+### Accessing the Staff Portal
+1. Create a user account if needed. A superuser created with `createsuperuser` can also access the staff portal:
    ```bash
    python manage.py createsuperuser
    ```
@@ -125,13 +132,37 @@ The operator dashboard is available at:
    ```bash
    python manage.py runserver
    ```
-3. Log in at:
-   - `http://127.0.0.1:8000/admin/`
-4. Open the dashboard:
+3. Open the staff login page:
+   - `http://127.0.0.1:8000/staff/login/`
+4. After a successful staff login, Django redirects to:
    - `http://127.0.0.1:8000/operator/dashboard/`
 
-If you are logged in as a non-staff user, access will be denied.
+### Accessing the Superuser Portal
+1. Create a superuser if needed:
+   ```bash
+   python manage.py createsuperuser
+   ```
+2. Open the superuser login page:
+   - `http://127.0.0.1:8000/superuser/login/`
+3. After a successful superuser login, Django redirects to:
+   - `http://127.0.0.1:8000/superuser/dashboard/`
 
+If a non-superuser attempts to sign in through the superuser login page, the page stays open and displays a clear authorization error.
+
+
+---
+
+## Recent Admin Portal Updates
+
+The current staff/superuser workflow includes these updates:
+
+- Fixed the staff dashboard template syntax issue that previously caused `TemplateSyntaxError` at `/operator/dashboard/`.
+- Added polished Create Staff User and Create Staff Role pages with consistent primary/secondary action buttons and less crowded role/permission controls.
+- Added dedicated staff and superuser login pages styled with the same visual language as the client-facing site.
+- Kept staff and superuser portal navigation separate, while allowing superusers to access the staff portal when they need to review operational inquiries.
+- Fixed sticky navbar hover behavior so scrolled navigation links still turn white on hover/focus.
+- Ordered draft itinerary items consistently by day and slot: `Morning`, `Afternoon`, then `Evening`.
+- Added tests covering portal rendering, login redirects, authorization behavior, and itinerary ordering.
 
 ---
 
@@ -141,11 +172,11 @@ If you are logged in as a non-staff user, access will be denied.
 - `core/models.py` – data models
 - `core/forms.py` – backend validation
 - `core/recommender.py` – rule-based itinerary logic
-- `core/views.py` – page and workflow views
-- `core/admin.py` – operator/admin workflow
+- `core/views.py` – page, portal login, access-control, proposal, and itinerary workflow views
+- `core/admin.py` – Django admin workflow
 - `core/management/commands/seed_data.py` – demo dataset seeding
-- `core/templates/core/` – homepage, destinations, contact templates
-- `css/styles.css` – site styling
+- `core/templates/core/` – homepage, destinations, contact, staff portal, superuser portal, and login templates
+- `css/styles.css` – site styling, including sticky navbar hover behavior
 
 ---
 
@@ -189,7 +220,10 @@ The application includes the following security controls:
   - Inquiry form validation for destination and business rules.
   - Proposal form validation (`final_cost`, `proposal_notes` max length).
 - **Access control hardening**:
-  - Proposal-sending workflow restricted to staff users (`@staff_member_required`).
+  - Staff portal routes require a successful login and redirect unauthenticated users to `/staff/login/`, avoiding 403 errors for the staff dashboard.
+  - Superuser management routes require `is_superuser=True` and redirect users to `/superuser/login/`.
+  - Superuser credentials are required to manage staff users and roles.
+  - Safe `next` redirect validation is used after portal login.
 - **Secure runtime configuration**:
   - Secrets/config moved to environment variables (`DJANGO_SECRET_KEY`, etc.).
   - `.env.example` added for required environment settings.
@@ -243,7 +277,7 @@ Use `.env.example` as a baseline:
 This section maps current controls to OWASP Top 10 categories:
 
 1. **A01: Broken Access Control**  
-   - Mitigation: `send_proposal` route is staff-only (`@staff_member_required`).
+   - Mitigation: staff portal routes require authentication, superuser management routes require superuser accounts, and portal login redirects validate `next` URLs before redirecting.
 
 2. **A02: Cryptographic Failures**  
    - Mitigation: secrets removed from source and provided by environment variables; HTTPS redirect and secure cookies enabled for transport/session protection.
@@ -261,7 +295,7 @@ This section maps current controls to OWASP Top 10 categories:
    - Status: **Operational control required**. Keep Django and dependencies updated with routine patching.
 
 7. **A07: Identification and Authentication Failures**  
-   - Mitigation: auth endpoint throttling (5/15min) and strong password validation policies.
+   - Mitigation: auth endpoint throttling (5/15min), strong password validation policies, and dedicated portal login forms for staff and superuser access.
 
 8. **A08: Software and Data Integrity Failures**  
    - Status: **Partially addressed**. Recommend adding dependency pinning and CI integrity checks (hash-locked requirements, signed releases where possible).
