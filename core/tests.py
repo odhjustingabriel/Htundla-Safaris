@@ -74,6 +74,11 @@ class StaffAdminPanelPageTests(TestCase):
             password='password12345',
             is_staff=True,
         )
+        self.portal_user = User.objects.create_user(
+            username='portaluser',
+            email='portal@example.com',
+            password='password12345',
+        )
         self.destination = Destination.objects.create(name='Serengeti')
         self.inquiry = Inquiry.objects.create(
             full_name='Panel Guest',
@@ -151,6 +156,16 @@ class StaffAdminPanelPageTests(TestCase):
         })
 
         self.assertRedirects(response, reverse('admin_dashboard'))
+
+    def test_staff_login_accepts_authenticated_portal_user_without_403(self):
+        response = self.client.post(reverse('staff_login'), {
+            'username': 'portaluser',
+            'password': 'password12345',
+        })
+
+        self.assertRedirects(response, reverse('admin_dashboard'))
+        response = self.client.get(reverse('admin_dashboard'))
+        self.assertEqual(response.status_code, 200)
 
     def test_superuser_login_accepts_superuser_credentials(self):
         response = self.client.post(reverse('superuser_login'), {

@@ -118,13 +118,13 @@ The project has two in-app portal entry points in addition to Django's built-in 
 
 | Portal | Login URL | Dashboard URL | Who can access | Purpose |
 | --- | --- | --- | --- | --- |
-| Staff Portal | `http://127.0.0.1:8000/staff/login/` | `http://127.0.0.1:8000/operator/dashboard/` | Any authenticated user with `is_staff=True`, including superusers | Review customer inquiries, filter records, review generated itineraries, edit drafts, and send proposals. |
+| Staff Portal | `http://127.0.0.1:8000/staff/login/` | `http://127.0.0.1:8000/operator/dashboard/` | Any authenticated portal user, including superusers | Review customer inquiries, filter records, review generated itineraries, edit drafts, and send proposals. |
 | Superuser Portal | `http://127.0.0.1:8000/superuser/login/` | `http://127.0.0.1:8000/superuser/dashboard/` | Authenticated users with `is_superuser=True` | Create/edit staff users and create/edit staff roles/groups. |
 
 The staff and superuser portals intentionally do **not** cross-link to each other in their navigation. Use the correct login URL for the portal you want to access.
 
 ### Accessing the Staff Portal
-1. Create a staff-capable account if needed. A superuser created with `createsuperuser` can also access the staff portal:
+1. Create a user account if needed. A superuser created with `createsuperuser` can also access the staff portal:
    ```bash
    python manage.py createsuperuser
    ```
@@ -220,7 +220,7 @@ The application includes the following security controls:
   - Inquiry form validation for destination and business rules.
   - Proposal form validation (`final_cost`, `proposal_notes` max length).
 - **Access control hardening**:
-  - Staff portal routes require `is_staff=True` and redirect unauthenticated users to `/staff/login/`.
+  - Staff portal routes require a successful login and redirect unauthenticated users to `/staff/login/`, avoiding 403 errors for the staff dashboard.
   - Superuser management routes require `is_superuser=True` and redirect users to `/superuser/login/`.
   - Superuser credentials are required to manage staff users and roles.
   - Safe `next` redirect validation is used after portal login.
@@ -277,7 +277,7 @@ Use `.env.example` as a baseline:
 This section maps current controls to OWASP Top 10 categories:
 
 1. **A01: Broken Access Control**  
-   - Mitigation: staff portal routes require staff accounts, superuser management routes require superuser accounts, and portal login redirects validate `next` URLs before redirecting.
+   - Mitigation: staff portal routes require authentication, superuser management routes require superuser accounts, and portal login redirects validate `next` URLs before redirecting.
 
 2. **A02: Cryptographic Failures**  
    - Mitigation: secrets removed from source and provided by environment variables; HTTPS redirect and secure cookies enabled for transport/session protection.

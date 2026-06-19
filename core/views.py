@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import login
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group, User
 from django.core.exceptions import PermissionDenied
@@ -26,10 +26,6 @@ SLOT_ORDER = Case(
 
 def _chronological_items(queryset):
     return queryset.alias(slot_order=SLOT_ORDER).order_by('day_number', 'slot_order', 'id')
-
-
-def _is_staff_portal_user(user):
-    return user.is_authenticated and user.is_staff
 
 
 def _is_superuser(user):
@@ -58,7 +54,7 @@ def staff_login(request):
     return _portal_login(
         request,
         portal_name='Staff Portal',
-        required_check=lambda user: user.is_authenticated and user.is_staff,
+        required_check=lambda user: user.is_authenticated,
         redirect_name='admin_dashboard',
         template_name='core/portal_login.html',
     )
@@ -96,7 +92,7 @@ def contact_us(request):
     return render(request, 'core/contactus.html', {'form': form})
 
 
-@user_passes_test(_is_staff_portal_user, login_url='staff_login')
+@login_required(login_url='staff_login')
 def send_proposal(request, inquiry_id):
     inquiry = get_object_or_404(Inquiry, id=inquiry_id)
     response, _ = OperatorResponse.objects.get_or_create(inquiry=inquiry)
@@ -145,7 +141,7 @@ def _filtered_inquiries(request):
     }
 
 
-@user_passes_test(_is_staff_portal_user, login_url='staff_login')
+@login_required(login_url='staff_login')
 def admin_dashboard(request):
     if request.user.is_superuser:
         raise PermissionDenied('Superusers must use the superuser admin panel only.')
@@ -163,7 +159,7 @@ def admin_dashboard(request):
     return render(request, 'core/admin_dashboard.html', ctx)
 
 
-@user_passes_test(_is_staff_portal_user, login_url='staff_login')
+@login_required(login_url='staff_login')
 def operator_inquiry_review(request, inquiry_id):
     ensure_local_sqlite_inquiry_schema()
     inquiry = get_object_or_404(
@@ -187,7 +183,7 @@ def operator_inquiry_review(request, inquiry_id):
     })
 
 
-@user_passes_test(_is_staff_portal_user, login_url='staff_login')
+@login_required(login_url='staff_login')
 def edit_itinerary(request, inquiry_id):
     ensure_local_sqlite_inquiry_schema()
     inquiry = get_object_or_404(Inquiry.objects.select_related('destination'), id=inquiry_id)
