@@ -51,7 +51,7 @@
   </div>
 
   <div class="panel">
-    <div class="panel-head"><div><h3>Inquiries & Generated Itineraries</h3><p class="muted">Review opens a dedicated operator page instead of the Django admin change form.</p></div></div>
+    <div class="panel-head"><div><h3>Inquiries & Generated Itineraries</h3></div></div>
     <table>
       <thead><tr><th>Client</th><th>Destination</th><th>Travel Type</th><th>Status</th><th>Itinerary Items</th><th>Action</th></tr></thead>
       <tbody>{% for inquiry in inquiries %}<tr><td><span class="client-name">{{ inquiry.full_name }}</span><br><small>{{ inquiry.email }}</small></td><td>{{ inquiry.destination.name }}</td><td><span class="badge">{{ inquiry.travel_type }}</span></td><td>{{ inquiry.status }}</td><td>{% if inquiry.itinerary %}{{ inquiry.itinerary.items.count }}{% else %}0{% endif %}</td><td class="actions"><a href="{% url 'operator_inquiry_review' inquiry.id %}">Review</a></td></tr>{% empty %}<tr><td colspan="6">No inquiries found.</td></tr>{% endfor %}</tbody>
