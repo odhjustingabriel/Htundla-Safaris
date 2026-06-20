@@ -19,7 +19,7 @@ from .forms import InquiryForm, ItineraryItemFormSet, ProposalForm, StaffRoleFor
 from .models import Destination, Inquiry, ItineraryItem, OperatorResponse
 from .recommender import generate_itinerary
 
-
+#slot order mapping for chronological sorting
 SLOT_ORDER = Case(
     When(time_slot='Morning', then=Value(1)),
     When(time_slot='Afternoon', then=Value(2)),
