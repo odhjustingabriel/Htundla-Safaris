@@ -59,6 +59,7 @@ SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'False').lower() == 
 SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'False').lower() == 'true'
 CSRF_COOKIE_SECURE = os.environ.get('CSRF_COOKIE_SECURE', 'False').lower() == 'true'
 REFERRER_POLICY = 'same-origin'
+CSRF_FAILURE_VIEW = 'core.views.csrf_failure'
 
 CACHES = {
     'default': {'BACKEND': 'django.core.cache.backends.dummy.DummyCache'}
