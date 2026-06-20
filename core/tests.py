@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.template.context import BaseContext
-from django.test import TestCase
+from django.test import Client, TestCase
 from django.urls import reverse
 
 from .django_compat import patch_template_context_copy
@@ -166,6 +166,36 @@ class StaffAdminPanelPageTests(TestCase):
         self.assertRedirects(response, reverse('admin_dashboard'))
         response = self.client.get(reverse('admin_dashboard'))
         self.assertEqual(response.status_code, 200)
+
+
+    def test_staff_login_with_valid_csrf_token_reaches_dashboard(self):
+        csrf_client = Client(enforce_csrf_checks=True)
+        response = csrf_client.get(reverse('staff_login'))
+        csrf_token = response.cookies['csrftoken'].value
+
+        response = csrf_client.post(reverse('staff_login'), {
+            'username': 'operator',
+            'password': 'password12345',
+            'csrfmiddlewaretoken': csrf_token,
+        })
+
+        self.assertRedirects(response, reverse('admin_dashboard'))
+        response = csrf_client.get(reverse('admin_dashboard'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Staff Admin Panel')
+
+    def test_staff_login_stale_csrf_token_shows_fresh_login_form_not_403(self):
+        csrf_client = Client(enforce_csrf_checks=True)
+
+        response = csrf_client.post(reverse('staff_login'), {
+            'username': 'operator',
+            'password': 'password12345',
+            'csrfmiddlewaretoken': 'stale-token',
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Your login form expired or had an invalid security token')
+        self.assertContains(response, 'Staff Portal')
 
     def test_superuser_login_accepts_superuser_credentials(self):
         response = self.client.post(reverse('superuser_login'), {

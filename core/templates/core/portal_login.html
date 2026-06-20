@@ -31,6 +31,7 @@
     <span class="eyebrow">Htundla Safaris</span>
     <h1>{{ portal_name }}</h1>
     <p>Sign in with your authorized credentials to continue to your portal.</p>
+    {% if csrf_error %}<div class="errors">{{ csrf_error }}</div>{% endif %}
     {% if form.non_field_errors %}<div class="errors">{{ form.non_field_errors }}</div>{% endif %}
     <form method="post">
       {% csrf_token %}

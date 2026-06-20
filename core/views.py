@@ -6,9 +6,14 @@ from django.contrib.auth.models import Group, User
 from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.db.models import Case, IntegerField, Q, Value, When
+from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_protect
+from django.views.csrf import csrf_failure as django_csrf_failure
 from .django_compat import ensure_local_sqlite_inquiry_schema
 from .forms import InquiryForm, ItineraryItemFormSet, ProposalForm, StaffRoleForm, StaffUserForm
 from .models import Destination, Inquiry, ItineraryItem, OperatorResponse
@@ -50,6 +55,8 @@ def _portal_login(request, *, portal_name, required_check, redirect_name, templa
     return render(request, template_name, {'form': form, 'portal_name': portal_name})
 
 
+@never_cache
+@csrf_protect
 def staff_login(request):
     return _portal_login(
         request,
@@ -60,6 +67,8 @@ def staff_login(request):
     )
 
 
+@never_cache
+@csrf_protect
 def superuser_login(request):
     return _portal_login(
         request,
@@ -68,6 +77,24 @@ def superuser_login(request):
         redirect_name='superuser_dashboard',
         template_name='core/portal_login.html',
     )
+
+
+def csrf_failure(request, reason=''):
+    portal_names = {
+        '/staff/login/': 'Staff Portal',
+        '/superuser/login/': 'Superuser Admin Panel',
+    }
+    portal_name = portal_names.get(request.path)
+    if not portal_name:
+        return django_csrf_failure(request, reason=reason)
+
+    form = AuthenticationForm(request)
+    get_token(request)
+    return render(request, 'core/portal_login.html', {
+        'form': form,
+        'portal_name': portal_name,
+        'csrf_error': 'Your login form expired or had an invalid security token. Please try logging in again.',
+    })
 
 
 def index(request):

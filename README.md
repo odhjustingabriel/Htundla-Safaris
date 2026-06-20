@@ -158,7 +158,7 @@ The current staff/superuser workflow includes these updates:
 
 - Fixed the staff dashboard template syntax issue that previously caused `TemplateSyntaxError` at `/operator/dashboard/`.
 - Added polished Create Staff User and Create Staff Role pages with consistent primary/secondary action buttons and less crowded role/permission controls.
-- Added dedicated staff and superuser login pages styled with the same visual language as the client-facing site.
+- Added dedicated staff and superuser login pages styled with the same visual language as the client-facing site, with no-cache/CSRF handling to recover cleanly from expired login forms.
 - Kept staff and superuser portal navigation separate, while allowing superusers to access the staff portal when they need to review operational inquiries.
 - Fixed sticky navbar hover behavior so scrolled navigation links still turn white on hover/focus.
 - Ordered draft itinerary items consistently by day and slot: `Morning`, `Afternoon`, then `Evening`.
@@ -224,6 +224,7 @@ The application includes the following security controls:
   - Superuser management routes require `is_superuser=True` and redirect users to `/superuser/login/`.
   - Superuser credentials are required to manage staff users and roles.
   - Safe `next` redirect validation is used after portal login.
+  - Portal login pages are served with no-cache headers and show a fresh login form if a stale CSRF token is submitted.
 - **Secure runtime configuration**:
   - Secrets/config moved to environment variables (`DJANGO_SECRET_KEY`, etc.).
   - `.env.example` added for required environment settings.
