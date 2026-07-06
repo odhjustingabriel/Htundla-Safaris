@@ -40,11 +40,14 @@ def generate_itinerary(inquiry):
         itinerary.save()
         return itinerary
 
+    activities_per_day = max(1, min(int(getattr(inquiry, 'activities_per_day', 3) or 3), len(SLOTS)))
+    selected_slots = SLOTS[:activities_per_day]
+
     used = set()
     remaining = activities[:]
     for day in range(1, inquiry.duration_days + 1):
         phase = _phase(day, inquiry.duration_days)
-        for slot in SLOTS:
+        for slot in selected_slots:
             if not remaining:
                 remaining = activities[:]
             ranked = sorted(remaining, key=lambda a: (-_score(a, inquiry, phase, slot, used), a.name))
@@ -59,6 +62,6 @@ def generate_itinerary(inquiry):
                 notes=f"{phase} day • {pick.interest} • {pick.intensity} • {pick.style}",
             )
 
-    itinerary.summary = f"Draft {inquiry.duration_days}-day itinerary for {inquiry.destination.name} ({inquiry.travel_style}) with activity-interest matching."
+    itinerary.summary = f"Draft {inquiry.duration_days}-day itinerary for {inquiry.destination.name} ({inquiry.travel_style}) with {activities_per_day} activity slot(s) per day and activity-interest matching."
     itinerary.save()
     return itinerary

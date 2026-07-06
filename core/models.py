@@ -27,6 +27,7 @@ class Activity(models.Model):
 class Inquiry(models.Model):
     travel_type_choices=[('Safari','Safari'),('MICE','MICE')]
     style_choices=[('Budget-friendly','Budget-friendly'),('Standard','Standard'),('Luxury','Luxury')]
+    activities_per_day_choices=[(1,'1 activity per day'),(2,'2 activities per day'),(3,'3 activities per day')]
     full_name = models.CharField(max_length=120)
     email = models.EmailField()
     phone_number = models.CharField(max_length=25, blank=True, validators=[RegexValidator(r'^[0-9+\-\s()]{7,25}$','Invalid phone format')])
@@ -35,6 +36,7 @@ class Inquiry(models.Model):
     duration_days = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     travel_style = models.CharField(max_length=20, choices=style_choices)
     group_size = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+    activities_per_day = models.PositiveSmallIntegerField(choices=activities_per_day_choices, default=3)
     interests = models.JSONField(default=list)
     additional_interests = models.TextField(blank=True)
     status = models.CharField(max_length=20, default='Draft Generated')
