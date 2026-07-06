@@ -5,6 +5,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group, User
 from django.core.mail import send_mail
 from django.db.models import Case, Count, IntegerField, Q, Value, When
+from django.http import JsonResponse
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -298,3 +299,16 @@ def superuser_dashboard(request):
         'total_superusers': User.objects.filter(is_superuser=True).count(),
     }
     return render(request, 'core/superuser_dashboard.html', ctx)
+
+
+@login_required(login_url='staff_login')
+def destination_popularity_api(request):
+    """Return destination popularity data as JSON for charting."""
+    data = (
+        Destination.objects.annotate(inquiry_count=Count('inquiry'))
+        .order_by('-inquiry_count')
+        .values_list('name', 'inquiry_count')
+    )
+    labels = [row[0] for row in data]
+    counts = [row[1] for row in data]
+    return JsonResponse({'labels': labels, 'counts': counts})

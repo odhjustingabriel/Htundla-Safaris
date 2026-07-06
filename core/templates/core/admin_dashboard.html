@@ -14,6 +14,38 @@
     body{background:linear-gradient(135deg,#fffaf4 0%,#f7eadc 45%,#fff 100%);font-family:'Poppins',sans-serif;color:var(--ink)}
     header{backdrop-filter:blur(14px);background:rgba(255,248,241,.94);box-shadow:0 10px 30px rgba(72,31,28,.08)}
     .dashboard-wrap{padding:130px 8% 48px}.eyebrow{text-transform:uppercase;letter-spacing:.18em;color:var(--rust);font-weight:700;font-size:.78rem}.hero-panel{background:linear-gradient(135deg,var(--brown),#6f2d24);border-radius:24px;padding:2rem;color:#fff;box-shadow:var(--shadow);display:flex;justify-content:space-between;gap:1rem;align-items:center}.hero-panel h2{font-size:2.2rem;color:#fff;margin:.2rem 0}.hero-panel p{color:#f9e5da}.top-links{display:flex;gap:.75rem;flex-wrap:wrap}.button-link,.actions a{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:999px;background:var(--brown);color:#fff;padding:.7rem 1rem;font-weight:700;text-decoration:none;box-shadow:0 8px 18px rgba(72,31,28,.16);cursor:pointer}.button-link.secondary{background:#fff;color:var(--brown)} .logout-form{margin:0}.dashboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem;margin-top:1.5rem}.dash-card,.panel{background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:18px;padding:1.2rem;box-shadow:var(--shadow)}.dash-card h3{font-size:.85rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.dash-card p{font-size:2rem;font-weight:800;color:var(--brown);margin-top:.4rem}.panel{margin-top:1.25rem}.panel-head{display:flex;justify-content:space-between;gap:1rem;align-items:center;margin-bottom:1rem}.panel h3{color:var(--brown);font-size:1.15rem}.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.85rem;align-items:end}.filters label{display:block;font-weight:700;color:var(--brown);margin-bottom:.3rem}.filters input,.filters select{width:100%;padding:.75rem;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}table{width:100%;border-collapse:separate;border-spacing:0 .65rem}th{color:var(--brown);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;text-align:left;padding:.5rem .75rem}td{background:#fff;padding:.85rem .75rem;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}td:first-child{border-left:1px solid var(--line);border-radius:14px 0 0 14px}td:last-child{border-right:1px solid var(--line);border-radius:0 14px 14px 0}.badge{display:inline-block;border-radius:999px;padding:.35rem .65rem;background:var(--cream);color:var(--rust);font-weight:700;font-size:.8rem}.muted{color:var(--muted);font-size:.92rem}.client-name{font-weight:800;color:var(--brown)}
+
+    /* --- Filter button row --- */
+    .filter-actions{display:flex;gap:.75rem;align-items:end;flex-wrap:wrap}
+
+    /* --- Popularity button accent --- */
+    .button-link.popularity{background:linear-gradient(135deg,#a03f2d,#d4603a);box-shadow:0 8px 20px rgba(160,63,45,.28);transition:transform .2s,box-shadow .2s}
+    .button-link.popularity:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 12px 28px rgba(160,63,45,.36)}
+
+    /* --- Modal overlay --- */
+    .pop-overlay{position:fixed;inset:0;z-index:9999;background:rgba(45,27,24,.55);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .35s ease}
+    .pop-overlay.active{opacity:1;pointer-events:auto}
+
+    /* --- Modal card --- */
+    .pop-card{background:linear-gradient(160deg,#fff 0%,#fff8f1 100%);border:1px solid var(--line);border-radius:28px;width:min(92vw,880px);max-height:90vh;overflow-y:auto;padding:2.4rem 2.8rem;box-shadow:0 32px 80px rgba(72,31,28,.22);transform:translateY(24px) scale(.96);transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .35s ease;opacity:0}
+    .pop-overlay.active .pop-card{transform:translateY(0) scale(1);opacity:1}
+    .pop-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem}
+    .pop-header h2{font-size:1.55rem;color:var(--brown);margin:0;font-weight:800}
+    .pop-close{width:40px;height:40px;border-radius:50%;border:0;background:var(--sand);color:var(--brown);font-size:1.3rem;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:background .2s,transform .2s}
+    .pop-close:hover{background:var(--rust);color:#fff;transform:rotate(90deg)}
+    .pop-subtitle{color:var(--muted);font-size:.88rem;margin-bottom:1.6rem}
+    .chart-wrap{position:relative;width:100%;min-height:380px}
+
+    /* --- Summary cards row inside modal --- */
+    .pop-stats{display:flex;gap:1rem;margin-bottom:1.6rem;flex-wrap:wrap}
+    .pop-stat{background:linear-gradient(135deg,var(--brown),#6f2d24);color:#fff;border-radius:16px;padding:1rem 1.4rem;flex:1;min-width:160px;box-shadow:0 8px 22px rgba(72,31,28,.15)}
+    .pop-stat small{text-transform:uppercase;letter-spacing:.12em;font-size:.7rem;opacity:.8}
+    .pop-stat p{font-size:1.6rem;font-weight:800;margin:.25rem 0 0}
+
+    /* --- Loading spinner --- */
+    .pop-spinner{text-align:center;padding:3rem 0;color:var(--muted)}
+    .pop-spinner::after{content:'';display:block;margin:1rem auto 0;width:32px;height:32px;border:3px solid var(--line);border-top-color:var(--rust);border-radius:50%;animation:spin .7s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
   </style>
 </head>
 <body>
@@ -42,17 +74,168 @@
       <div><label for="travel_type">Travel Type</label><select id="travel_type" name="travel_type"><option value="">All travel types</option><option value="Safari" {% if filters.travel_type == 'Safari' %}selected{% endif %}>Safari</option><option value="MICE" {% if filters.travel_type == 'MICE' %}selected{% endif %}>MICE</option></select></div>
       <div><label for="destination">Destination</label><select id="destination" name="destination"><option value="">All destinations</option>{% for destination in destinations %}<option value="{{ destination.id }}" {% if filters.destination == destination.id|stringformat:'s' %}selected{% endif %}>{{ destination.name }}</option>{% endfor %}</select></div>
       <div><label for="repeat_customers">Customer Type</label><select id="repeat_customers" name="repeat_customers"><option value="">All customers</option><option value="1" {% if filters.repeat_customers %}selected{% endif %}>Repeat customers</option></select></div>
-      <div><button class="button-link" type="submit">Apply Filters</button></div>
+      <div class="filter-actions">
+        <button class="button-link" type="submit">Apply Filters</button>
+        <button class="button-link popularity" type="button" id="popularity-btn" onclick="openPopularityModal()">&#128202; Destination Popularity</button>
+      </div>
     </form>
   </div>
 
   <div class="panel">
-    <div class="panel-head"><div><h3>Inquiries & Generated Itineraries</h3></div></div>
+    <div class="panel-head"><div><h3>Inquiries &amp; Generated Itineraries</h3></div></div>
     <table>
       <thead><tr><th>Client</th><th>Destination</th><th>Travel Type</th><th>Status</th><th>Itinerary Items</th><th>Action</th></tr></thead>
       <tbody>{% for inquiry in inquiries %}<tr><td><span class="client-name">{{ inquiry.full_name }}</span><br><small>{{ inquiry.email }}</small></td><td>{{ inquiry.destination.name }}</td><td><span class="badge">{{ inquiry.travel_type }}</span></td><td>{{ inquiry.status }}</td><td>{% if inquiry.itinerary %}{{ inquiry.itinerary.items.count }}{% else %}0{% endif %}</td><td class="actions"><a href="{% url 'operator_inquiry_review' inquiry.id %}">Review</a></td></tr>{% empty %}<tr><td colspan="6">No inquiries found.</td></tr>{% endfor %}</tbody>
     </table>
   </div>
 </section>
+
+<!-- Destination Popularity Modal -->
+<div class="pop-overlay" id="popularity-modal">
+  <div class="pop-card">
+    <div class="pop-header">
+      <h2>&#128202; Destination Popularity Report</h2>
+      <button class="pop-close" onclick="closePopularityModal()" aria-label="Close">&times;</button>
+    </div>
+    <p class="pop-subtitle">Destinations ranked by the number of customer inquiries received.</p>
+
+    <div class="pop-stats" id="pop-stats-row"></div>
+
+    <div class="chart-wrap">
+      <div class="pop-spinner" id="chart-loader">Loading chart data&hellip;</div>
+      <canvas id="popularityChart" style="display:none"></canvas>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+(function(){
+  var overlay  = document.getElementById('popularity-modal');
+  var canvas   = document.getElementById('popularityChart');
+  var loader   = document.getElementById('chart-loader');
+  var statsRow = document.getElementById('pop-stats-row');
+  var chartInstance = null;
+
+  /* ---------- open / close ---------- */
+  window.openPopularityModal = function(){
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    fetchPopularity();
+  };
+  window.closePopularityModal = function(){
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  };
+  overlay.addEventListener('click', function(e){ if(e.target === overlay) closePopularityModal(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closePopularityModal(); });
+
+  /* ---------- gradient palette for bars ---------- */
+  function barGradient(ctx2d, chartArea, idx, total){
+    var g = ctx2d.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+    var hue = 12 + (idx / Math.max(total,1)) * 30;
+    g.addColorStop(0, 'hsla('+hue+',65%,38%,0.85)');
+    g.addColorStop(1, 'hsla('+(hue+8)+',72%,55%,0.95)');
+    return g;
+  }
+
+  /* ---------- fetch + render ---------- */
+  function fetchPopularity(){
+    loader.style.display   = 'block';
+    canvas.style.display   = 'none';
+    statsRow.innerHTML     = '';
+
+    fetch("{% url 'destination_popularity_api' %}")
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        loader.style.display = 'none';
+        canvas.style.display = 'block';
+        renderStats(d);
+        renderChart(d);
+      })
+      .catch(function(){
+        loader.textContent = 'Failed to load data. Please try again.';
+      });
+  }
+
+  /* ---------- summary stat cards ---------- */
+  function renderStats(data){
+    var total = data.counts.reduce(function(s,c){ return s+c; }, 0);
+    var top   = data.labels.length ? data.labels[0] : '\u2014';
+    var topN  = data.counts.length ? data.counts[0] : 0;
+    statsRow.innerHTML =
+      '<div class="pop-stat"><small>Total Inquiries</small><p>'+total+'</p></div>'+
+      '<div class="pop-stat"><small>Most Popular</small><p>'+top+'</p></div>'+
+      '<div class="pop-stat"><small>Top Count</small><p>'+topN+'</p></div>'+
+      '<div class="pop-stat"><small>Destinations</small><p>'+data.labels.length+'</p></div>';
+  }
+
+  /* ---------- chart ---------- */
+  function renderChart(data){
+    if(chartInstance){ chartInstance.destroy(); }
+
+    var ctx2d = canvas.getContext('2d');
+    var total = data.labels.length;
+
+    chartInstance = new Chart(ctx2d, {
+      type: 'bar',
+      data: {
+        labels: data.labels,
+        datasets: [{
+          label: 'Number of Inquiries',
+          data: data.counts,
+          borderRadius: 10,
+          borderSkipped: false,
+          maxBarThickness: 64,
+          backgroundColor: function(context){
+            var chart = context.chart;
+            var area  = chart.chartArea;
+            if(!area) return 'rgba(160,63,45,.7)';
+            return barGradient(ctx2d, area, context.dataIndex, total);
+          },
+          hoverBackgroundColor: 'rgba(160,63,45,.95)'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: { duration: 900, easing: 'easeOutQuart' },
+        layout: { padding: { top: 12 } },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#481f1c',
+            titleFont: { family: 'Poppins', weight: '700' },
+            bodyFont:  { family: 'Poppins' },
+            cornerRadius: 12,
+            padding: 14,
+            callbacks: {
+              label: function(tip){
+                var sum = data.counts.reduce(function(s,c){return s+c;},0);
+                return tip.raw + ' inquiries (' + (sum ? Math.round(tip.raw/sum*100) : 0) + '%)';
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { color: '#77635d', font: { family: 'Poppins', weight: '600', size: 12 } }
+          },
+          y: {
+            beginAtZero: true,
+            ticks: {
+              color: '#77635d',
+              font: { family: 'Poppins', weight: '600' },
+              precision: 0
+            },
+            grid: { color: 'rgba(234,216,200,.45)' }
+          }
+        }
+      }
+    });
+  }
+})();
+</script>
 </body>
 </html>
