@@ -23,8 +23,8 @@
 
 <section class="dashboard-wrap">
   <div class="hero-panel">
-    <div><span class="eyebrow">Htundla Safaris operations</span><h2>Staff Admin Panel</h2><p>Review inquiries, filter records, and prepare polished safari proposals.</p></div>
-    <div class="top-links"><a class="button-link secondary" href="{% url 'admin_dashboard' %}">Staff Inquiry Panel</a><form class="logout-form" method="post" action="{% url 'staff_logout' %}">{% csrf_token %}<button class="button-link secondary" type="submit">Log Out</button></form></div>
+    <div><span class="eyebrow">Htundla Safaris operations</span><h2>Staff Admin Panel</h2></div>
+    <div class="top-links"><form class="logout-form" method="post" action="{% url 'staff_logout' %}">{% csrf_token %}<button class="button-link secondary" type="submit">Log Out</button></form></div>
   </div>
 
   <div class="dashboard-grid">

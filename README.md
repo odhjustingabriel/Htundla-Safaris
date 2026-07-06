@@ -1,6 +1,6 @@
 # Htundla Safaris
 
-A final-year project website for **Htundla Safaris** (Safari + MICE) implemented with a simple KISS architecture:
+A final-year project website for **Htundla Safaris** (Safari + MICE):
 - Frontend: HTML, CSS, JavaScript
 - Backend: Django
 - Recommendation: rule-based itinerary generation (no external AI API dependency)
