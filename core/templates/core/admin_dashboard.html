@@ -16,11 +16,7 @@
     .dashboard-wrap{padding:130px 8% 48px}.eyebrow{text-transform:uppercase;letter-spacing:.18em;color:var(--rust);font-weight:700;font-size:.78rem}.hero-panel{background:linear-gradient(135deg,var(--brown),#6f2d24);border-radius:24px;padding:2rem;color:#fff;box-shadow:var(--shadow);display:flex;justify-content:space-between;gap:1rem;align-items:center}.hero-panel h2{font-size:2.2rem;color:#fff;margin:.2rem 0}.hero-panel p{color:#f9e5da}.top-links{display:flex;gap:.75rem;flex-wrap:wrap}.button-link,.actions a{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:999px;background:var(--brown);color:#fff;padding:.7rem 1rem;font-weight:700;text-decoration:none;box-shadow:0 8px 18px rgba(72,31,28,.16);cursor:pointer}.button-link.secondary{background:#fff;color:var(--brown)} .logout-form{margin:0}.dashboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem;margin-top:1.5rem}.dash-card,.panel{background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:18px;padding:1.2rem;box-shadow:var(--shadow)}.dash-card h3{font-size:.85rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.dash-card p{font-size:2rem;font-weight:800;color:var(--brown);margin-top:.4rem}.panel{margin-top:1.25rem}.panel-head{display:flex;justify-content:space-between;gap:1rem;align-items:center;margin-bottom:1rem}.panel h3{color:var(--brown);font-size:1.15rem}.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.85rem;align-items:end}.filters label{display:block;font-weight:700;color:var(--brown);margin-bottom:.3rem}.filters input,.filters select{width:100%;padding:.75rem;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}table{width:100%;border-collapse:separate;border-spacing:0 .65rem}th{color:var(--brown);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;text-align:left;padding:.5rem .75rem}td{background:#fff;padding:.85rem .75rem;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}td:first-child{border-left:1px solid var(--line);border-radius:14px 0 0 14px}td:last-child{border-right:1px solid var(--line);border-radius:0 14px 14px 0}.badge{display:inline-block;border-radius:999px;padding:.35rem .65rem;background:var(--cream);color:var(--rust);font-weight:700;font-size:.8rem}.muted{color:var(--muted);font-size:.92rem}.client-name{font-weight:800;color:var(--brown)}
 
     /* --- Filter button row --- */
-    .filter-actions{display:flex;gap:.75rem;align-items:end;flex-wrap:wrap}
-
-    /* --- Popularity button accent --- */
-    .button-link.popularity{background:linear-gradient(135deg,#a03f2d,#d4603a);box-shadow:0 8px 20px rgba(160,63,45,.28);transition:transform .2s,box-shadow .2s}
-    .button-link.popularity:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 12px 28px rgba(160,63,45,.36)}
+    .filter-actions{display:flex;gap:.75rem;align-items:end;white-space:nowrap}
 
     /* --- Modal overlay --- */
     .pop-overlay{position:fixed;inset:0;z-index:9999;background:rgba(45,27,24,.55);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .35s ease}
@@ -76,7 +72,7 @@
       <div><label for="repeat_customers">Customer Type</label><select id="repeat_customers" name="repeat_customers"><option value="">All customers</option><option value="1" {% if filters.repeat_customers %}selected{% endif %}>Repeat customers</option></select></div>
       <div class="filter-actions">
         <button class="button-link" type="submit">Apply Filters</button>
-        <button class="button-link popularity" type="button" id="popularity-btn" onclick="openPopularityModal()">&#128202; Destination Popularity</button>
+        <button class="button-link" type="button" id="popularity-btn" onclick="openPopularityModal()">Destination Ranking</button>
       </div>
     </form>
   </div>
@@ -94,7 +90,7 @@
 <div class="pop-overlay" id="popularity-modal">
   <div class="pop-card">
     <div class="pop-header">
-      <h2>&#128202; Destination Popularity Report</h2>
+      <h2>Destination Ranking Report</h2>
       <button class="pop-close" onclick="closePopularityModal()" aria-label="Close">&times;</button>
     </div>
     <p class="pop-subtitle">Destinations ranked by the number of customer inquiries received.</p>
