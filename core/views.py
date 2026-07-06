@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group, User
@@ -77,6 +77,16 @@ def superuser_login(request):
         redirect_name='superuser_dashboard',
         template_name='core/portal_login.html',
     )
+
+
+def staff_logout(request):
+    logout(request)
+    return redirect('staff_login')
+
+
+def superuser_logout(request):
+    logout(request)
+    return redirect('superuser_login')
 
 
 def csrf_failure(request, reason=''):
