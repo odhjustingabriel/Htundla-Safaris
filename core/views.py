@@ -1,11 +1,10 @@
 from django.contrib import messages
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group, User
-from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
-from django.db.models import Case, IntegerField, Q, Value, When
+from django.db.models import Case, Count, IntegerField, Q, Value, When
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -79,6 +78,16 @@ def superuser_login(request):
     )
 
 
+def staff_logout(request):
+    logout(request)
+    return redirect('staff_login')
+
+
+def superuser_logout(request):
+    logout(request)
+    return redirect('superuser_login')
+
+
 def csrf_failure(request, reason=''):
     portal_names = {
         '/staff/login/': 'Staff Portal',
@@ -150,6 +159,7 @@ def _filtered_inquiries(request):
     travel_type = request.GET.get('travel_type', '').strip()
     destination_id = request.GET.get('destination', '').strip()
     search = request.GET.get('q', '').strip()
+    repeat_customers = request.GET.get('repeat_customers', '').strip()
 
     if status:
         inquiries = inquiries.filter(status=status)
@@ -159,19 +169,26 @@ def _filtered_inquiries(request):
         inquiries = inquiries.filter(destination_id=destination_id)
     if search:
         inquiries = inquiries.filter(Q(full_name__icontains=search) | Q(email__icontains=search))
+    if repeat_customers:
+        repeat_customer_emails = (
+            Inquiry.objects.values('email')
+            .annotate(inquiry_count=Count('id'))
+            .filter(inquiry_count__gt=1)
+            .values('email')
+        )
+        inquiries = inquiries.filter(email__in=repeat_customer_emails)
 
     return inquiries, {
         'status': status,
         'travel_type': travel_type,
         'destination': destination_id,
         'q': search,
+        'repeat_customers': repeat_customers,
     }
 
 
 @login_required(login_url='staff_login')
 def admin_dashboard(request):
-    if request.user.is_superuser:
-        raise PermissionDenied('Superusers must use the superuser admin panel only.')
     inquiries, filters = _filtered_inquiries(request)
     ctx = {
         'panel_title': 'Staff Admin Panel',

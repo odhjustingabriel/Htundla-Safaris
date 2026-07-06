@@ -81,6 +81,7 @@ const steps=[
  {key:'duration_days',q:'How many days?',type:'text',validate:v=>Number.isInteger(+v)&&+v>0},
  {key:'travel_style',q:'Choose travel style:',type:'choice',choices:[{label:'Budget-friendly',value:'Budget-friendly'},{label:'Standard',value:'Standard'},{label:'Luxury',value:'Luxury'}]},
  {key:'group_size',q:'How many travelers in your group?',type:'text',validate:v=>Number.isInteger(+v)&&+v>0},
+ {key:'activities_per_day',q:'How many activities would you ideally like each day?',type:'choice',choices:[{label:'1 activity a day',value:'1'},{label:'2 activities a day',value:'2'},{label:'3 activities a day',value:'3'}]},
  {key:'interests',q:'Select interests (choose one or more, then click Finish):',type:'multi',choices:interestOptions},
  {key:'additional_interests',q:'Any additional interests we did not list? Separate multiple interests with commas, or press skip.',type:'text',optional:true,validate:v=>!v || /^[a-zA-Z0-9\s,'&/-]{2,300}$/.test(v)},
 ];
@@ -102,6 +103,7 @@ function submit(){
  form.querySelector('[name="duration_days"]').value=answers.duration_days||'';
  form.querySelector('[name="travel_style"]').value=answers.travel_style||'';
  form.querySelector('[name="group_size"]').value=answers.group_size||'';
+ form.querySelector('[name="activities_per_day"]').value=answers.activities_per_day||'3';
  form.querySelector('[name="additional_interests"]').value=answers.additional_interests||'';
  interestInputs.forEach(i=>i.checked=(answers.interests||[]).includes(i.value));
 msg('Thanks! Submitting your inquiry now...','bot');

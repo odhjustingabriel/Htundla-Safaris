@@ -10,7 +10,7 @@ class InquiryForm(forms.ModelForm):
     interests = forms.MultipleChoiceField(choices=[(i,i) for i in ALLOWED_INTERESTS], widget=forms.CheckboxSelectMultiple)
     class Meta:
         model = Inquiry
-        fields = ['full_name','email','phone_number','travel_type','destination','duration_days','travel_style','group_size','interests','additional_interests']
+        fields = ['full_name','email','phone_number','travel_type','destination','duration_days','travel_style','group_size','activities_per_day','interests','additional_interests']
 
     def clean_destination(self):
         d = self.cleaned_data['destination']
