@@ -1,7 +1,7 @@
 from django.contrib import messages
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib.auth.models import Group, User
 from django.core.mail import send_mail
 from django.db.models import Case, Count, IntegerField, Q, Value, When
@@ -315,3 +315,23 @@ def destination_popularity_api(request):
     labels = [row[0] for row in data]
     counts = [row[1] for row in data]
     return JsonResponse({'labels': labels, 'counts': counts})
+
+
+@login_required(login_url='staff_login')
+def change_password(request):
+    """Allow users to change their password."""
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Keep the user logged in
+            messages.success(request, 'Your password was successfully updated!')
+            if user.is_superuser:
+                return redirect('superuser_dashboard')
+            return redirect('admin_dashboard')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'core/change_password.html', {
+        'form': form,
+        'title': 'Change Password',
+    })

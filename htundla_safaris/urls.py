@@ -10,6 +10,7 @@ urlpatterns = [
     path('staff/logout/', views.staff_logout, name='staff_logout'),
     path('superuser/login/', views.superuser_login, name='superuser_login'),
     path('superuser/logout/', views.superuser_logout, name='superuser_logout'),
+    path('accounts/password/change/', views.change_password, name='change_password'),
     path('proposal/send/<int:inquiry_id>/', views.send_proposal, name='send_proposal'),
     path('operator/dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('operator/dashboard', views.admin_dashboard),
