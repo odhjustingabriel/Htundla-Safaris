@@ -14,6 +14,22 @@ def _interest_values(inquiry):
 
 
 def _score(activity, inquiry, phase, slot, used_titles):
+    # Hard constraint: Time slot compatibility
+    if activity.time_slot in ('Morning', 'Afternoon', 'Evening') and activity.time_slot != slot:
+        return -10000
+
+    # Safety keyword checks to prevent obvious mismatch even if DB is misconfigured
+    name_lower = activity.name.lower()
+    if any(word in name_lower for word in ['dinner', 'evening', 'sundowner', 'night']):
+        if slot != 'Evening':
+            return -10000
+    if any(word in name_lower for word in ['morning', 'sunrise', 'breakfast']):
+        if slot != 'Morning':
+            return -10000
+    if 'lunch' in name_lower:
+        if slot != 'Afternoon':
+            return -10000
+
     score = activity.base_score
     if activity.style == inquiry.travel_style:
         score += 4

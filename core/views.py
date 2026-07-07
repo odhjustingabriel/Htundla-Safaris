@@ -96,7 +96,10 @@ def csrf_failure(request, reason=''):
     }
     portal_name = portal_names.get(request.path)
     if not portal_name:
-        return django_csrf_failure(request, reason=reason)
+        return render(request, 'core/csrf_failure.html', {
+            'reason': reason,
+            'path': request.path,
+        }, status=403)
 
     form = AuthenticationForm(request)
     get_token(request)

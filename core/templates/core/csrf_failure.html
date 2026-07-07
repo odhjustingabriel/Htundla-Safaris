@@ -1,0 +1,170 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Paytone+One&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+  <title>Security Check Failed</title>
+  <style>
+    :root {
+      --brown: #481f1c;
+      --rust: #a03f2d;
+      --cream: #fff8f1;
+      --sand: #f4e4d3;
+      --ink: #2d1b18;
+      --muted: #77635d;
+      --line: #ead8c8;
+      --shadow: 0 18px 45px rgba(72,31,28,.12);
+    }
+    body {
+      background: linear-gradient(135deg, #fffaf4 0%, #f7eadc 45%, #fff 100%);
+      font-family: 'Poppins', sans-serif;
+      color: var(--ink);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+      box-sizing: border-box;
+    }
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      backdrop-filter: blur(14px);
+      background: rgba(255,248,241,.94);
+      box-shadow: 0 10px 30px rgba(72,31,28,.08);
+      padding: 20px 8%;
+      display: flex;
+      justify-content: flex-start;
+      z-index: 100;
+    }
+    .error-card {
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: clamp(2rem, 5vw, 3.5rem);
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+      box-shadow: var(--shadow);
+      margin-top: 80px;
+      transition: transform 0.3s;
+    }
+    .error-card:hover {
+      transform: translateY(-4px);
+    }
+    .icon-wrap {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #fff1f1;
+      color: var(--rust);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid #fcdada;
+    }
+    h1 {
+      font-family: 'Paytone One', sans-serif;
+      color: var(--brown);
+      font-size: 2rem;
+      margin: 0 0 1rem;
+      line-height: 1.2;
+    }
+    p {
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 1.8rem;
+      font-size: 1rem;
+    }
+    .details {
+      background: var(--cream);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 1rem;
+      margin-bottom: 2rem;
+      font-family: monospace;
+      font-size: 0.88rem;
+      color: var(--rust);
+      text-align: left;
+      word-break: break-all;
+    }
+    .details summary {
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      color: var(--brown);
+      outline: none;
+    }
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      border-radius: 999px;
+      background: var(--brown);
+      color: #fff;
+      padding: .85rem 1.6rem;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 8px 18px rgba(72,31,28,.16);
+      cursor: pointer;
+      transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+    }
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px rgba(72, 31, 28, 0.22);
+    }
+    .button.secondary {
+      background: #fff;
+      color: var(--brown);
+      border: 1px solid var(--line);
+    }
+    .button.secondary:hover {
+      background: var(--cream);
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="logo"><img src="{% static 'htundla-mainlogo2.png' %}" alt="Htundla Safaris logo"></div>
+</header>
+
+<main class="error-card">
+  <div class="icon-wrap">
+    &#9888;
+  </div>
+  <h1>Security Check Failed</h1>
+  <p>
+    We were unable to verify your session security token. This usually happens if your login session expired, cookies are disabled, or the form was left open for a long time.
+  </p>
+
+  <details class="details">
+    <summary>Technical Details</summary>
+    <div style="margin-top: 0.5rem;">
+      <strong>Error:</strong> CSRF token verification failed.<br>
+      <strong>Path:</strong> {{ path }}<br>
+      <strong>Reason:</strong> {{ reason }}
+    </div>
+  </details>
+
+  <div class="actions">
+    <button class="button" onclick="window.location.reload();">Reload Page</button>
+    <a class="button secondary" href="javascript:history.back();">Go Back</a>
+    <a class="button secondary" href="{% url 'index' %}">Go Home</a>
+  </div>
+</main>
+</body>
+</html>
